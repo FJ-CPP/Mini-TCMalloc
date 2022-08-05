@@ -178,15 +178,15 @@ Span是由连续的页面构成的，因此一个Span可能对应着一个或多
 - 树的第一层映射PAGE_ID的**前5个位**，因此第一层共有**2^5^**个槽位，每个位置存放第二层的结点指针。
 - 树的第二层映射PAGE_ID的**后14个位**(由于页号最大为2^19^-1，因此页号最多有19位)，每个节点的对应位置存放的就是对应的Span。
 
-![image-20220805110101427](C:\Users\12286\AppData\Roaming\Typora\typora-user-images\image-20220805110101427.png)
+![image-20220805110101427](https://typora-1307604235.cos.ap-nanjing.myqcloud.com/typora_img/202208051854671.png)
 
-基数树可以达到接近于**直接定址法**的效率，还可以确保只在需要的时候再开辟空间进行映射，因此更加节省空间。
+基数树可以达到接近于**直接定址法**的效率，还可以确保只在需要的时候开辟空间进行映射，因此更加节省空间。
 
 ### 3、Span的合并
 
 对于Page Heap中已分配出去的Span，需要先保存Span内部所有页的ID到Span的映射关系。
 
-![image-20220805110605073](C:\Users\12286\AppData\Roaming\Typora\typora-user-images\image-20220805110605073.png)
+![image-20220805110605073](https://typora-1307604235.cos.ap-nanjing.myqcloud.com/typora_img/202208051854391.png)
 
 对于未分配出去的Span，只需要保存起始页和最后一页的ID到Span的映射关系。
 
@@ -202,7 +202,7 @@ Span是由连续的页面构成的，因此一个Span可能对应着一个或多
 
 `ObjectPool`会利用系统调用申请一大块的空间，在需要时从大块空间中切出一指定大小的一部分给用户。
 
-![image-20220805142531296](C:\Users\12286\AppData\Roaming\Typora\typora-user-images\image-20220805142531296.png)
+![image-20220805142531296](https://typora-1307604235.cos.ap-nanjing.myqcloud.com/typora_img/202208051854164.png)
 
 同时，`ObjectPool`像Thread Cache那样维护空闲链表，将外部返还回来的内存块管理起来，方便以后直接从链表中取内存块返还给用户。
 
@@ -214,9 +214,9 @@ Span是由连续的页面构成的，因此一个Span可能对应着一个或多
 
 ### 1、单线程随机内存大小申请测试
 
-![image-20220805140950172](C:\Users\12286\AppData\Roaming\Typora\typora-user-images\image-20220805140950172.png)
+![image-20220805140950172](https://typora-1307604235.cos.ap-nanjing.myqcloud.com/typora_img/202208051854655.png)
 
-![image-20220805140928903](C:\Users\12286\AppData\Roaming\Typora\typora-user-images\image-20220805140928903.png)
+![image-20220805140928903](https://typora-1307604235.cos.ap-nanjing.myqcloud.com/typora_img/202208051854220.png)
 
 在运行之初，tcmalloc的效率是malloc的40倍左右，后期稳定在4~6倍。
 
@@ -224,17 +224,17 @@ Span是由连续的页面构成的，因此一个Span可能对应着一个或多
 
 
 
-![image-20220805140609337](C:\Users\12286\AppData\Roaming\Typora\typora-user-images\image-20220805140609337.png)
+![image-20220805140609337](https://typora-1307604235.cos.ap-nanjing.myqcloud.com/typora_img/202208051854437.png)
 
-![image-20220805140751338](C:\Users\12286\AppData\Roaming\Typora\typora-user-images\image-20220805140751338.png)
+![image-20220805140751338](https://typora-1307604235.cos.ap-nanjing.myqcloud.com/typora_img/202208051854357.png)
 
 可以看到，Mini-TCMalloc的表现非常优异，在高并发情况下稳定在malloc速度的10~20倍。
 
 ### 3、多线程指定内存大小申请测试
 
-![image-20220805141834709](C:\Users\12286\AppData\Roaming\Typora\typora-user-images\image-20220805141834709.png)
+![image-20220805141834709](https://typora-1307604235.cos.ap-nanjing.myqcloud.com/typora_img/202208051854150.png)
 
-![image-20220805141840513](C:\Users\12286\AppData\Roaming\Typora\typora-user-images\image-20220805141840513.png)
+![image-20220805141840513](https://typora-1307604235.cos.ap-nanjing.myqcloud.com/typora_img/202208051854009.png)
 
 前期略显优势，但是因为桶竞争问题，导致tcmalloc整体性能略逊一筹。但是考虑到测试场景比较特殊，现实工程中一般会采取定长的数据结构池来负责解决这种情况。
 
