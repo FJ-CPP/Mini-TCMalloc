@@ -4,12 +4,12 @@
 
 struct Span
 {
-	PAGE_ID _pageID = 0;       // SpanµÄÆğÊ¼Ò³Ò³ºÅ
-	size_t _objSize = 0;       // SpanÇĞ³öÈ¥µÄĞ¡ÄÚ´æ¿éµÄ´óĞ¡
-	size_t _n = 0;             // Ò³ÃæµÄÊıÁ¿
-	int _useCount = 0;         // Span±»·Ö¸î³ÉĞ¡ÄÚ´æ¿éºó£¬ÓĞ¶àÉÙ¸öÒÑ¾­±»Ê¹ÓÃ
+	PAGE_ID _pageID = 0;       // Spançš„èµ·å§‹é¡µé¡µå·
+	size_t _objSize = 0;       // Spanåˆ‡å‡ºå»çš„å°å†…å­˜å—çš„å¤§å°
+	size_t _n = 0;             // é¡µé¢çš„æ•°é‡
+	int _useCount = 0;         // Spanè¢«åˆ†å‰²æˆå°å†…å­˜å—åï¼Œæœ‰å¤šå°‘ä¸ªå·²ç»è¢«ä½¿ç”¨
 
-	void* _freeList = nullptr; // ¹ÜÀíĞ¡ÄÚ´æ¿éµÄ¿ÕÏĞÁ´±í
+	void* _freeList = nullptr; // ç®¡ç†å°å†…å­˜å—çš„ç©ºé—²é“¾è¡¨
 
 	Span* _prev = nullptr;
 	Span* _next = nullptr;
@@ -17,7 +17,7 @@ struct Span
 	bool _isUsed = false;
 };
 
-// ´øÍ·Ë«ÏòÁ´±í¹ÜÀíSpan
+// å¸¦å¤´åŒå‘é“¾è¡¨ç®¡ç†Span
 class SpanList
 {
 private:

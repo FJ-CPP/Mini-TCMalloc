@@ -9,7 +9,7 @@ CentralCache CentralCache::_instance;
 
 Span* CentralCache::GetOneSpan(SpanList& list, size_t size)
 {
-	// ÓÅÏÈÊ¹ÓÃ¿ÕÏĞµÄspan
+	// ä¼˜å…ˆä½¿ç”¨ç©ºé—²çš„span
 	Span* span = list.Begin();
 	while (span != list.End())
 	{
@@ -20,9 +20,9 @@ Span* CentralCache::GetOneSpan(SpanList& list, size_t size)
 		span = span->_next;
 	}
 
-	// Ã»ÓĞ¿ÉÓÃµÄspanÔòÏòPage CacheÉêÇë
+	// æ²¡æœ‰å¯ç”¨çš„spanåˆ™å‘Page Cacheç”³è¯·
 
-	list.Unlock(); // ÔİÊ±²»ĞèÒª·ÃÎÊ¹şÏ£Í°ÁË£¬Òò´ËÏÈ°ÑÍ°Ëø½â¿ª£¬·½±ãÆäËüÏß³ÌµÄThread CacheÏòÕâ¸öÍ°ÖĞ»¹ÄÚ´æ¿é
+	list.Unlock(); // æš‚æ—¶ä¸éœ€è¦è®¿é—®å“ˆå¸Œæ¡¶äº†ï¼Œå› æ­¤å…ˆæŠŠæ¡¶é”è§£å¼€ï¼Œæ–¹ä¾¿å…¶å®ƒçº¿ç¨‹çš„Thread Cacheå‘è¿™ä¸ªæ¡¶ä¸­è¿˜å†…å­˜å—
 
 	PageHeap::GetInstance()->Lock();
 	span = PageHeap::GetInstance()->NewSpan(Utility::NumMovePage(size));
@@ -30,11 +30,11 @@ Span* CentralCache::GetOneSpan(SpanList& list, size_t size)
 
 	span->_objSize = size;
 
-	char* begin = (char*)(span->_pageID << PAGE_SHIFT); // ´óÄÚ´æ¿éµÄÆğÊ¼Î»ÖÃ
-	size_t bytes = span->_n << PAGE_SHIFT; // ´óÄÚ´æ¿éµÄ´óĞ¡
-	char* end = begin + bytes; // ´óÄÚ´æ¿éµÄ½áÊøÎ»ÖÃ
+	char* begin = (char*)(span->_pageID << PAGE_SHIFT); // å¤§å†…å­˜å—çš„èµ·å§‹ä½ç½®
+	size_t bytes = span->_n << PAGE_SHIFT; // å¤§å†…å­˜å—çš„å¤§å°
+	char* end = begin + bytes; // å¤§å†…å­˜å—çš„ç»“æŸä½ç½®
 
-	// ½«span°´ÕÕsize½øĞĞÄÚ´æ¿éÇĞ·Ö²¢Î²²åµ½¿ÕÏĞÁ´±í
+	// å°†spanæŒ‰ç…§sizeè¿›è¡Œå†…å­˜å—åˆ‡åˆ†å¹¶å°¾æ’åˆ°ç©ºé—²é“¾è¡¨
 	span->_freeList = begin;
 	void* tail = begin;
 	begin += size;
@@ -46,22 +46,22 @@ Span* CentralCache::GetOneSpan(SpanList& list, size_t size)
 	}
 	NextObj(tail) = nullptr;
 
-	// ÇĞ·ÖÍê³Éºó½«Æä´æ·Åµ½¶ÔÓ¦µÄ¹şÏ£Í°ÖĞ(ÓÉÓÚ·ÃÎÊÁË¹şÏ£Í°Òò´ËÏÈ¼ÓËø)
+	// åˆ‡åˆ†å®Œæˆåå°†å…¶å­˜æ”¾åˆ°å¯¹åº”çš„å“ˆå¸Œæ¡¶ä¸­(ç”±äºè®¿é—®äº†å“ˆå¸Œæ¡¶å› æ­¤å…ˆåŠ é”)
 	list.Lock();
 	list.PushFront(span);
 
 	return span;
 }
 
-// ÏòThread CacheÌá¹©n¸ösize´óĞ¡µÄÄÚ´æ¿é£¬·µ»ØÊµ¼ÊÌá¹©ÁËÄÚ´æ¿éÊıÁ¿
+// å‘Thread Cacheæä¾›nä¸ªsizeå¤§å°çš„å†…å­˜å—ï¼Œè¿”å›å®é™…æä¾›äº†å†…å­˜å—æ•°é‡
 int CentralCache::RemoveRange(void*& begin, void*& end, size_t n, size_t size)
 {
 	size_t idx = Utility::Index(size);
 	SpanList& list = _spanLists[idx];
 
-	list.Lock(); // ¼ÓÍ°Ëø
+	list.Lock(); // åŠ æ¡¶é”
 
-	Span* span = GetOneSpan(list, size); // »ñÈ¡Ò»¸ö¿ÉÓÃµÄSpan
+	Span* span = GetOneSpan(list, size); // è·å–ä¸€ä¸ªå¯ç”¨çš„Span
 	assert(span);
 	assert(span->_freeList);
 
@@ -69,7 +69,7 @@ int CentralCache::RemoveRange(void*& begin, void*& end, size_t n, size_t size)
 	end = begin;
 	size_t fetchNum = 1;
 
-	// È¡ÏÂfetchNum¸öÄÚ´æ¿é£¬Ö±ÖÁfetchNum = n »òÕß ¿ÕÏĞÁ´±íÎª¿Õ
+	// å–ä¸‹fetchNumä¸ªå†…å­˜å—ï¼Œç›´è‡³fetchNum = n æˆ–è€… ç©ºé—²é“¾è¡¨ä¸ºç©º
 	for (size_t i = 0; i < n - 1 && NextObj(end) != nullptr; ++i)
 	{
 		end = NextObj(end);
@@ -84,7 +84,7 @@ int CentralCache::RemoveRange(void*& begin, void*& end, size_t n, size_t size)
 	return fetchNum;
 }
 
-// ´ÓThread Cache»ØÊÕsize´óĞ¡µÄÄÚ´æ¿é£¬²¢½«Æä²åÈëÖÁÔ­ÏÈµÄSpanÖĞ
+// ä»Thread Cacheå›æ”¶sizeå¤§å°çš„å†…å­˜å—ï¼Œå¹¶å°†å…¶æ’å…¥è‡³åŸå…ˆçš„Spanä¸­
 void CentralCache::ReleaseListToSpans(void* begin, size_t size)
 {
 	size_t idx = Utility::Index(size);
@@ -96,7 +96,7 @@ void CentralCache::ReleaseListToSpans(void* begin, size_t size)
 	{
 		void* next = NextObj(begin);
 
-		// ½«ÄÚ´æ¿é»¹¸ø¶ÔÓ¦µÄSpan
+		// å°†å†…å­˜å—è¿˜ç»™å¯¹åº”çš„Span
 		Span* span = PageHeap::GetInstance()->MapObjectToSpan(begin);
 
 		NextObj(begin) = span->_freeList;
@@ -105,21 +105,21 @@ void CentralCache::ReleaseListToSpans(void* begin, size_t size)
 
 		if (span->_useCount == 0)
 		{
-			// spanÄÚ·Ö¸î³öÈ¥µÄÄÚ´æ¿éÈ«²¿»¹»ØÀ´ÁË
-			// ´ËÊ±½«span³õÊ¼»¯²¢»¹¸øPage Heap
+			// spanå†…åˆ†å‰²å‡ºå»çš„å†…å­˜å—å…¨éƒ¨è¿˜å›æ¥äº†
+			// æ­¤æ—¶å°†spanåˆå§‹åŒ–å¹¶è¿˜ç»™Page Heap
 			list.Erase(span);
 			span->_freeList = nullptr;
 			span->_prev = nullptr;
 			span->_next = nullptr;
 
-			// »¹Ö®Ç°¿ÉÒÔ½«Central CacheµÄÍ°Ëø½â¿ª£¬·½±ãÆäËüÏß³ÌÉêÇëºÍÊÍ·ÅÄÚ´æ
+			// è¿˜ä¹‹å‰å¯ä»¥å°†Central Cacheçš„æ¡¶é”è§£å¼€ï¼Œæ–¹ä¾¿å…¶å®ƒçº¿ç¨‹ç”³è¯·å’Œé‡Šæ”¾å†…å­˜
 			list.Unlock();
 
 			PageHeap::GetInstance()->Lock();
 			PageHeap::GetInstance()->ReleaseSpanToPageHeap(span);
 			PageHeap::GetInstance()->Unlock();
 
-			// »¹Ö®ºó¼ÌĞø¼ÓÍ°Ëø
+			// è¿˜ä¹‹åç»§ç»­åŠ æ¡¶é”
 			list.Lock();
 		}
 

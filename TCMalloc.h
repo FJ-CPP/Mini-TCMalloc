@@ -1,7 +1,7 @@
 #pragma once
 #include "ThreadCache.h"
 
-// Thread CacheÊı¾İ½á¹¹³Ø
+// Thread Cacheæ•°æ®ç»“æ„æ± 
 static ObjectPool<ThreadCache> _tcPool;
 
 class TLSThreadCache
@@ -25,8 +25,8 @@ public:
 
 
 
-// ¸ù¾İËùĞè´óĞ¡ÉêÇëÄÚ´æ¿é
+// æ ¹æ®æ‰€éœ€å¤§å°ç”³è¯·å†…å­˜å—
 void* TCMalloc(int bytes);
 
-// ÊÍ·ÅTCMallocÉêÇëµÄÄÚ´æ¿éobj
+// é‡Šæ”¾TCMallocç”³è¯·çš„å†…å­˜å—obj
 void TCFree(void* obj);

@@ -8,18 +8,18 @@ class ThreadCache
 private:
 	FreeList _freeLists[FREE_LIST_SIZE];
 private:
-	// ´ÓCentral Cache»ñÈ¡ÄÚ´æ¿é
+	// ä»Central Cacheè·å–å†…å­˜å—
 	void* FetchFromCentralCache(size_t idx, size_t size);
 public:
-	// ·ÖÅäÄÚ´æ
+	// åˆ†é…å†…å­˜
 	void* Allocate(size_t bytes);
 
-	// ÊÍ·ÅÄÚ´æ
+	// é‡Šæ”¾å†…å­˜
 	void DeAllocate(void* obj, size_t size);
 
-	// ¿ÕÏĞÁ´±í¹ı³¤£¬Ôò½«¶àÓàÄÚ´æ¿é»¹¸øCentral Cache
+	// ç©ºé—²é“¾è¡¨è¿‡é•¿ï¼Œåˆ™å°†å¤šä½™å†…å­˜å—è¿˜ç»™Central Cache
 	void ListTooLong(FreeList& list, size_t size);
 
-	// ÊÍ·ÅÖ®Ç°½«ËùÓĞ¿ÕÏĞÁ´±í»¹¸øCentral Cache
+	// é‡Šæ”¾ä¹‹å‰å°†æ‰€æœ‰ç©ºé—²é“¾è¡¨è¿˜ç»™Central Cache
 	~ThreadCache();
 };

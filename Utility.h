@@ -1,7 +1,7 @@
 #pragma once
 #include "common.h"
 
-// 内存对齐规则和哈希桶下标计算
+// 鍐呭瓨瀵归綈瑙勫垯鍜屽搱甯屾《涓嬫爣璁＄畻
 class Utility
 {
 private:
@@ -9,14 +9,14 @@ private:
 
 	static size_t IndexHelper(size_t bytes, size_t alignShift);
 public:
-	// 将size向上对齐
+	// 灏唖ize鍚戜笂瀵归綈
 	static size_t RoundUp(size_t bytes);
 	  
-	// 获取对齐后大小为size的内存块在哈希表中的下标
+	// 鑾峰彇瀵归綈鍚庡ぇ灏忎负size鐨勫唴瀛樺潡鍦ㄥ搱甯岃〃涓殑涓嬫爣
 	static int Index(size_t size);
 
 	static size_t NumMoveSize(size_t size);
 
-	// 根据size计算其应当由npage页的Span分割而来
+	// 鏍规嵁size璁＄畻鍏跺簲褰撶敱npage椤电殑Span鍒嗗壊鑰屾潵
 	static size_t NumMovePage(size_t size);
 };

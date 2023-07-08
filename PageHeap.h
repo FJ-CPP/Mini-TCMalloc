@@ -6,7 +6,7 @@
 class PageHeap
 {
 private:
-	// 单例模式(饿汉)
+	// 鍗曚緥妯″紡(楗挎眽)
 	static PageHeap _instance;
 	PageHeap()
 	{
@@ -23,13 +23,13 @@ public:
 		return &_instance;
 	}
 
-	// 获取内存块所在的Span
+	// 鑾峰彇鍐呭瓨鍧楁墍鍦ㄧ殑Span
 	Span* MapObjectToSpan(void* obj);
 
-	// 申请一个n页的Span
+	// 鐢宠涓�涓猲椤电殑Span
 	Span* NewSpan(size_t npage);
 	
-	// 将Span返还给PageHeap
+	// 灏哠pan杩旇繕缁橮ageHeap
 	void ReleaseSpanToPageHeap(Span* span);
 
 	void Lock()

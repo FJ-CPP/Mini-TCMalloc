@@ -2,24 +2,24 @@
 #include "common.h"
 
 /*
- * ¶¨³¤µÄÊı¾İ½á¹¹ÄÚ´æ³Ø£¬¸ù¾İÄ£°åTÌá¹©´óĞ¡Îªsizeof(T)µÄ¶¨³¤ÄÚ´æ¿é
+ * å®šé•¿çš„æ•°æ®ç»“æ„å†…å­˜æ± ï¼Œæ ¹æ®æ¨¡æ¿Tæä¾›å¤§å°ä¸ºsizeof(T)çš„å®šé•¿å†…å­˜å—
 */
 
 template <class T>
 class ObjectPool
 {
 private:
-	char* _start = nullptr;    // ÄÚ´æ³ØµÄÆğÊ¼µØÖ·
-	void* _freeList = nullptr; // ¿ÉÓÃÄÚ´æ¿é×é³ÉµÄ¿ÕÏĞÁ´±í
-	size_t _remainBytes = 0;   // ÄÚ´æ³ØÊ£Óà¿Õ¼ä´óĞ¡
+	char* _start = nullptr;    // å†…å­˜æ± çš„èµ·å§‹åœ°å€
+	void* _freeList = nullptr; // å¯ç”¨å†…å­˜å—ç»„æˆçš„ç©ºé—²é“¾è¡¨
+	size_t _remainBytes = 0;   // å†…å­˜æ± å‰©ä½™ç©ºé—´å¤§å°
 	std::mutex _mtx;
 public:
-	// ÉêÇëÒ»¸öTÀàĞÍ¶ÔÏó
+	// ç”³è¯·ä¸€ä¸ªTç±»å‹å¯¹è±¡
 	T* New()
 	{
 		return new T();
 		T* obj = nullptr;
-		// ÓÅÏÈµ½¿ÕÏĞÁ´±íÖĞÈ¡ÏÂÒ»¸ö¿ÉÓÃÄÚ´æ¿é
+		// ä¼˜å…ˆåˆ°ç©ºé—²é“¾è¡¨ä¸­å–ä¸‹ä¸€ä¸ªå¯ç”¨å†…å­˜å—
 		if (_freeList != nullptr)
 		{
 			obj = (T*)_freeList;
@@ -29,16 +29,16 @@ public:
 			return obj;
 		}
 		
-		// Ö±½Ó´ÓÄÚ´æ³ØÈ¡Ò»¿éÄÚ´æ
+		// ç›´æ¥ä»å†…å­˜æ± å–ä¸€å—å†…å­˜
 		if (_remainBytes < sizeof(T))
 		{
-			// Ê£ÓàÄÚ´æ²»¹»ÓÃ
-			_remainBytes = 128 * 1024; // Ã¿´ÎÄ¬ÈÏ¿ª±Ù128KB
+			// å‰©ä½™å†…å­˜ä¸å¤Ÿç”¨
+			_remainBytes = 128 * 1024; // æ¯æ¬¡é»˜è®¤å¼€è¾Ÿ128KB
 			_start = (char*)SystemAlloc(_remainBytes >> 13);
 		}
 
-		// ÓÉÓÚfreeListĞèÒªÓÃ"Ç°4/8×Ö½Ú(È¡¾öÓÚÏµÍ³Î»Êı)"´æ´¢ÏÂÒ»¸ö½Úµã
-		// Òò´ËÖÁÉÙ·ÖÅäsizeof(char*)¸ö×Ö½Ú
+		// ç”±äºfreeListéœ€è¦ç”¨"å‰4/8å­—èŠ‚(å–å†³äºç³»ç»Ÿä½æ•°)"å­˜å‚¨ä¸‹ä¸€ä¸ªèŠ‚ç‚¹
+		// å› æ­¤è‡³å°‘åˆ†é…sizeof(char*)ä¸ªå­—èŠ‚
 		obj = (T*)_start;
 		_start += max(sizeof(T), sizeof(char*));
 		_remainBytes -= max(sizeof(T), sizeof(char*));
@@ -47,14 +47,14 @@ public:
 		{
 			int x = 10;
 		}
-		new(obj)T; // ¶¨Î»new£ºÏÔÊ½µ÷ÓÃ¹¹Ôìº¯Êı
+		new(obj)T; // å®šä½newï¼šæ˜¾å¼è°ƒç”¨æ„é€ å‡½æ•°
 		return obj;
 	}
 
-	// ÊÍ·ÅÒ»¸öTÀàĞÍ¶ÔÏó
+	// é‡Šæ”¾ä¸€ä¸ªTç±»å‹å¯¹è±¡
 	void Delete(T* obj)
 	{
-		obj->~T(); // ÇåÀí¶ÔÏó
+		obj->~T(); // æ¸…ç†å¯¹è±¡
 
 		*(void**)obj = _freeList;
 		_freeList = obj;
@@ -75,15 +75,15 @@ public:
 //class ObjectPool
 //{
 //private:
-//	char* _start = nullptr;  // ÄÚ´æ³ØµÄÆğÊ¼µØÖ·
-//	FreeList _freeList;      // ¿ÉÓÃÄÚ´æ¿é×é³ÉµÄ¿ÕÏĞÁ´±í
-//	size_t _remainBytes = 0; // ÄÚ´æ³ØÊ£Óà¿Õ¼ä´óĞ¡
+//	char* _start = nullptr;  // å†…å­˜æ± çš„èµ·å§‹åœ°å€
+//	FreeList _freeList;      // å¯ç”¨å†…å­˜å—ç»„æˆçš„ç©ºé—²é“¾è¡¨
+//	size_t _remainBytes = 0; // å†…å­˜æ± å‰©ä½™ç©ºé—´å¤§å°
 //public:
-//	// ÉêÇëÒ»¸öTÀàĞÍ¶ÔÏó
+//	// ç”³è¯·ä¸€ä¸ªTç±»å‹å¯¹è±¡
 //	T* New()
 //	{
 //		T* obj = nullptr;
-//		// ÓÅÏÈµ½¿ÕÏĞÁ´±íÖĞÈ¡ÏÂÒ»¸ö¿ÉÓÃÄÚ´æ¿é
+//		// ä¼˜å…ˆåˆ°ç©ºé—²é“¾è¡¨ä¸­å–ä¸‹ä¸€ä¸ªå¯ç”¨å†…å­˜å—
 //		if (!_freeList.Empty())
 //		{
 //			obj = (T*)_freeList.Pop();
@@ -92,28 +92,28 @@ public:
 //			return obj;
 //		}
 //
-//		// Ö±½Ó´ÓÄÚ´æ³ØÈ¡Ò»¿éÄÚ´æ
+//		// ç›´æ¥ä»å†…å­˜æ± å–ä¸€å—å†…å­˜
 //		if (_remainBytes < sizeof(T))
 //		{
-//			// Ê£ÓàÄÚ´æ²»¹»ÓÃ
-//			_remainBytes = 128 * 1024; // Ã¿´ÎÄ¬ÈÏ¿ª±Ù128KB
+//			// å‰©ä½™å†…å­˜ä¸å¤Ÿç”¨
+//			_remainBytes = 128 * 1024; // æ¯æ¬¡é»˜è®¤å¼€è¾Ÿ128KB
 //			_start = (char*)SystemAlloc(_remainBytes >> 13);
 //		}
 //
-//		// ÓÉÓÚfreeListĞèÒªÓÃ"Ç°4/8×Ö½Ú(È¡¾öÓÚÏµÍ³Î»Êı)"´æ´¢ÏÂÒ»¸ö½Úµã
-//		// Òò´ËÖÁÉÙ·ÖÅäsizeof(char*)¸ö×Ö½Ú
+//		// ç”±äºfreeListéœ€è¦ç”¨"å‰4/8å­—èŠ‚(å–å†³äºç³»ç»Ÿä½æ•°)"å­˜å‚¨ä¸‹ä¸€ä¸ªèŠ‚ç‚¹
+//		// å› æ­¤è‡³å°‘åˆ†é…sizeof(char*)ä¸ªå­—èŠ‚
 //		obj = (T*)_start;
 //		_start += max(sizeof(T), sizeof(char*));
 //		_remainBytes -= max(sizeof(T), sizeof(char*));
 //
-//		new(obj)T; // ¶¨Î»new£ºÏÔÊ½µ÷ÓÃ¹¹Ôìº¯Êı
+//		new(obj)T; // å®šä½newï¼šæ˜¾å¼è°ƒç”¨æ„é€ å‡½æ•°
 //		return obj;
 //	}
 //
-//	// ÊÍ·ÅÒ»¸öTÀàĞÍ¶ÔÏó
+//	// é‡Šæ”¾ä¸€ä¸ªTç±»å‹å¯¹è±¡
 //	void Delete(T* obj)
 //	{
-//		obj->~T(); // ÇåÀí¶ÔÏó
+//		obj->~T(); // æ¸…ç†å¯¹è±¡
 //
 //		_freeList.Push(obj);
 //	}

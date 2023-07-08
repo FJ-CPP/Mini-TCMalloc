@@ -3,23 +3,24 @@
 #include <vector>
 #include <ctime>
 #include <thread>
+#include <atomic>
 #include "TCMalloc.h"
 #include "ObjectPool.hpp"
 
 /*
- * »ù×¼²âÊÔÎÄ¼ş
+ * åŸºå‡†æµ‹è¯•æ–‡ä»¶
 */
 
 /*
- * ntimes: µ¥ÂÖ´ÎÉêÇëÊÍ·Å´ÎÊı
- * nworks: Ïß³ÌÊı
- * rounds: Ö´ĞĞÂÖ´Î
+ * ntimes: å•è½®æ¬¡ç”³è¯·é‡Šæ”¾æ¬¡æ•°
+ * nworks: çº¿ç¨‹æ•°
+ * rounds: æ‰§è¡Œè½®æ¬¡
 */
 void BenchmarkMalloc(size_t ntimes, size_t nworks, size_t rounds)
 {
 	std::vector<std::thread> vthread(nworks);
-	std::atomic<size_t> malloc_costtime = 0;
-	std::atomic<size_t> free_costtime = 0;
+	std::atomic<size_t> malloc_costtime(0);
+	std::atomic<size_t> free_costtime(0);
 
 	for (size_t k = 0; k < nworks; ++k)
 	{
@@ -55,23 +56,23 @@ void BenchmarkMalloc(size_t ntimes, size_t nworks, size_t rounds)
 		t.join();
 	}
 
-	std::cout << nworks << "¸öÏß³Ì²¢·¢Ö´ĞĞ" << rounds << "´Î£¬Ã¿ÂÖmalloc " << ntimes << "´Î£¬ºÄÊ±£º" << malloc_costtime << std::endl;
+	std::cout << nworks << "ä¸ªçº¿ç¨‹å¹¶å‘æ‰§è¡Œ" << rounds << "æ¬¡ï¼Œæ¯è½®malloc " << ntimes << "æ¬¡ï¼Œè€—æ—¶ï¼š" << malloc_costtime << std::endl;
 
-	std::cout << nworks << "¸öÏß³Ì²¢·¢Ö´ĞĞ" << rounds << "´Î£¬Ã¿ÂÖfree " << ntimes << "´Î£¬ºÄÊ±£º" << free_costtime << std::endl;
+	std::cout << nworks << "ä¸ªçº¿ç¨‹å¹¶å‘æ‰§è¡Œ" << rounds << "æ¬¡ï¼Œæ¯è½®free " << ntimes << "æ¬¡ï¼Œè€—æ—¶ï¼š" << free_costtime << std::endl;
 
-	std::cout << "×Ü¼ÆºÄÊ±:" << malloc_costtime + free_costtime << std::endl;
+	std::cout << "æ€»è®¡è€—æ—¶:" << malloc_costtime + free_costtime << std::endl;
 }
 
 /*
- * ntimes: µ¥ÂÖ´ÎÉêÇëÊÍ·Å´ÎÊı
- * nworks: Ïß³ÌÊı
- * rounds: Ö´ĞĞÂÖ´Î
+ * ntimes: å•è½®æ¬¡ç”³è¯·é‡Šæ”¾æ¬¡æ•°
+ * nworks: çº¿ç¨‹æ•°
+ * rounds: æ‰§è¡Œè½®æ¬¡
 */
 void BenchmarkTCMalloc(size_t ntimes, size_t nworks, size_t rounds)
 {
 	std::vector<std::thread> vthread(nworks);
-	std::atomic<size_t> malloc_costtime = 0;
-	std::atomic<size_t> free_costtime = 0;
+	std::atomic<size_t> malloc_costtime(0);
+	std::atomic<size_t> free_costtime(0);
 
 	for (size_t k = 0; k < nworks; ++k)
 	{
@@ -107,11 +108,11 @@ void BenchmarkTCMalloc(size_t ntimes, size_t nworks, size_t rounds)
 		t.join();
 	}
 
-	std::cout << nworks << "¸öÏß³Ì²¢·¢Ö´ĞĞ" << rounds << "´Î£¬Ã¿ÂÖtcmalloc " << ntimes << "´Î£¬ºÄÊ±£º" << malloc_costtime << std::endl;
+	std::cout << nworks << "ä¸ªçº¿ç¨‹å¹¶å‘æ‰§è¡Œ" << rounds << "æ¬¡ï¼Œæ¯è½®tcmalloc " << ntimes << "æ¬¡ï¼Œè€—æ—¶ï¼š" << malloc_costtime << std::endl;
 
-	std::cout << nworks << "¸öÏß³Ì²¢·¢Ö´ĞĞ" << rounds << "´Î£¬Ã¿ÂÖtcfree " << ntimes << "´Î£¬ºÄÊ±£º" << free_costtime << std::endl;
+	std::cout << nworks << "ä¸ªçº¿ç¨‹å¹¶å‘æ‰§è¡Œ" << rounds << "æ¬¡ï¼Œæ¯è½®tcfree " << ntimes << "æ¬¡ï¼Œè€—æ—¶ï¼š" << free_costtime << std::endl;
 
-	std::cout << "×Ü¼ÆºÄÊ±£º" << malloc_costtime + free_costtime << std::endl;
+	std::cout << "æ€»è®¡è€—æ—¶ï¼š" << malloc_costtime + free_costtime << std::endl;
 }
 
 int main()

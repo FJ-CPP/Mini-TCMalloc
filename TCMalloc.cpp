@@ -1,14 +1,14 @@
 #define _CRT_SECURE_NO_WARNINGS 1
 #include "TCMalloc.h"
 
-// TLS 线程本地存储的Thread Cache
+// TLS 绾跨▼鏈湴瀛樺偍鐨凾hread Cache
 thread_local TLSThreadCache tlsTC;
 
 void* TCMalloc(int bytes)
 {
 	assert(bytes > 0);
 
-	// 超过Thread Cache能够分配的最大内存，因此直接向Page Heap申请
+	// 瓒呰繃Thread Cache鑳藉鍒嗛厤鐨勬渶澶у唴瀛橈紝鍥犳鐩存帴鍚慞age Heap鐢宠
 	if (bytes > MAX_BYTES)
 	{
 		int alignedSize = Utility::RoundUp(bytes);

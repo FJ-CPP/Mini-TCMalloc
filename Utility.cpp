@@ -9,15 +9,15 @@ size_t Utility::RoundUpHelper(size_t bytes, int alignNum)
 	//}
 	//return (size / alignNum + 1) * alignNum;
 
-	// ÏÂÃæÕâĞĞ´úÂëµÈ¼ÛÓÚÉÏÃæ×¢ÊÍºóµÄ´úÂë
-	// ¾­²âÊÔ£¬¶şÕßĞÔÄÜÏà²îÎŞ¼¸£¬²»¹ıÏÂÃæÕâĞĞ¸ü¼ÓµÄÓÅÃÀ :)
+	// ä¸‹é¢è¿™è¡Œä»£ç ç­‰ä»·äºä¸Šé¢æ³¨é‡Šåçš„ä»£ç 
+	// ç»æµ‹è¯•ï¼ŒäºŒè€…æ€§èƒ½ç›¸å·®æ— å‡ ï¼Œä¸è¿‡ä¸‹é¢è¿™è¡Œæ›´åŠ çš„ä¼˜ç¾ :)
 	return ((bytes + alignNum - 1) & ~(alignNum - 1));
 }
 
 size_t Utility::IndexHelper(size_t bytes, size_t alignShift)
 {
-	// ÕâÀï 1 << alignShift == alignNum
-	// ÒÀÈ»ÊÇÓÅÃÀµÄ´úÂë :(
+	// è¿™é‡Œ 1 << alignShift == alignNum
+	// ä¾ç„¶æ˜¯ä¼˜ç¾çš„ä»£ç  :(
 	return ((bytes + (1 << alignShift) - 1) >> alignShift) - 1;
 }
 
@@ -45,7 +45,7 @@ size_t Utility::RoundUp(size_t bytes)
 	}
 	else
 	{
-		// ´óÓÚ256kbµÄ°´ÕÕÒ³´óĞ¡½øĞĞ¶ÔÆë
+		// å¤§äº256kbçš„æŒ‰ç…§é¡µå¤§å°è¿›è¡Œå¯¹é½
 		return RoundUpHelper(bytes, 1 << PAGE_SHIFT);
 	}
 }
@@ -84,9 +84,9 @@ size_t Utility::NumMoveSize(size_t size)
 {
 	assert(size > 0);
 
-	// ÂıÆô¶¯µÄãĞÖµ
-	// Ğ¡¶ÔÏóÒ»´Î×î¶àÉêÇë512¸ö
-	// ´ó¶ÔÏóÒ»´ÎÖÁÉÙÉêÇë2¸ö
+	// æ…¢å¯åŠ¨çš„é˜ˆå€¼
+	// å°å¯¹è±¡ä¸€æ¬¡æœ€å¤šç”³è¯·512ä¸ª
+	// å¤§å¯¹è±¡ä¸€æ¬¡è‡³å°‘ç”³è¯·2ä¸ª
 
 	int num = MAX_BYTES / size;
 

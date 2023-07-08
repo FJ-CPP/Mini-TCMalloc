@@ -1,7 +1,7 @@
 #pragma once
 #include "common.h"
 
-// Á½²ã»ùÊýÊ÷
+// ä¸¤å±‚åŸºæ•°æ ‘
 template <int BITS>
 class TCMalloc_PageMap2 
 {

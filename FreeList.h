@@ -1,65 +1,65 @@
 #pragma once
 #include "common.h"
 
-// ¿ÕÏĞÁ´±í
+// ç©ºé—²é“¾è¡¨
 class FreeList
 {
 private:
 	void* _head = nullptr;
-	size_t _size = 0;          // µ±Ç°Á´±íÄÚµÄÄÚ´æ¿é´óĞ¡
-	size_t _length = 0;        // µ±Ç°Á´±íµÄ³¤¶È
-	size_t _maxLength = 1;     // µ±Ç°Á´±íµÄ×î´ó³¤¶È(ÂıÆô¶¯ãĞÖµ)
+	size_t _size = 0;          // å½“å‰é“¾è¡¨å†…çš„å†…å­˜å—å¤§å°
+	size_t _length = 0;        // å½“å‰é“¾è¡¨çš„é•¿åº¦
+	size_t _maxLength = 1;     // å½“å‰é“¾è¡¨çš„æœ€å¤§é•¿åº¦(æ…¢å¯åŠ¨é˜ˆå€¼)
 public:
-	// Í·²åÒ»¸ö½Úµã
+	// å¤´æ’ä¸€ä¸ªèŠ‚ç‚¹
 	void Push(void* obj);
 
-	// È¡ÏÂÍ·½áµã
+	// å–ä¸‹å¤´ç»“ç‚¹
 	void* Pop(); 
 
-	// Í·²ån¸ö½áµã
+	// å¤´æ’nä¸ªç»“ç‚¹
 	void PushRange(void* begin, void* end, size_t n);
 
-	// Í·É¾n¸ö½áµã(Êä³öĞÍ²ÎÊı)
+	// å¤´åˆ nä¸ªç»“ç‚¹(è¾“å‡ºå‹å‚æ•°)
 	void PopRange(void*& begin, void*& end, size_t n);
 	
-	// »ñÈ¡Í·½áµã
+	// è·å–å¤´ç»“ç‚¹
 	void* Head() const
 	{
 		return _head;
 	}
 
-	// ÅĞ¶ÏÊÇ·ñÎª¿Õ
+	// åˆ¤æ–­æ˜¯å¦ä¸ºç©º
 	bool Empty() const
 	{
 		return _head == nullptr;
 		//return _length == 0;
 	}
 	
-	// »ñÈ¡Á´±íÄÚ´æ´¢µÄÄÚ´æ¿é´óĞ¡
+	// è·å–é“¾è¡¨å†…å­˜å‚¨çš„å†…å­˜å—å¤§å°
 	size_t Size() const
 	{
 		return _size;
 	}
 
-	// ÉèÖÃÁ´±íÄÚ´æ´¢µÄÄÚ´æ¿é´óĞ¡
+	// è®¾ç½®é“¾è¡¨å†…å­˜å‚¨çš„å†…å­˜å—å¤§å°
 	void SetSize(size_t size)
 	{
 		_size = size;
 	}
 
-	// »ñÈ¡µ±Ç°Á´±í³¤¶È
+	// è·å–å½“å‰é“¾è¡¨é•¿åº¦
 	size_t Length() const
 	{
 		return _length;
 	}
 
-	// »ñÈ¡µ±Ç°Á´±í³¤¶ÈãĞÖµ
+	// è·å–å½“å‰é“¾è¡¨é•¿åº¦é˜ˆå€¼
 	size_t MaxLength() const
 	{
 		return _maxLength;
 	}
 
-	// ÉèÖÃµ±Ç°Á´±í³¤¶ÈãĞÖµ
+	// è®¾ç½®å½“å‰é“¾è¡¨é•¿åº¦é˜ˆå€¼
 	void SetMaxLength(size_t newMax)
 	{
 		_maxLength = newMax;

@@ -5,12 +5,12 @@ void* ThreadCache::FetchFromCentralCache(size_t idx, size_t size)
 {
 	FreeList& list = _freeLists[idx];
 
-	// ÅúÁ¿ÉêÇëÓëÂýÆô¶¯
-	size_t maxLength = list.MaxLength(); // ÂýÆô¶¯ãÐÖµ
-	size_t batchNum = Utility::NumMoveSize(size); // ÀíÂÛÉÏµÄÅúÁ¿ÉêÇëÊýÁ¿
-	size_t numToFetch = min(maxLength, batchNum); // Êµ¼ÊÓ¦È¡µÄÊýÁ¿
+	// æ‰¹é‡ç”³è¯·ä¸Žæ…¢å¯åŠ¨
+	size_t maxLength = list.MaxLength(); // æ…¢å¯åŠ¨é˜ˆå€¼
+	size_t batchNum = Utility::NumMoveSize(size); // ç†è®ºä¸Šçš„æ‰¹é‡ç”³è¯·æ•°é‡
+	size_t numToFetch = std::min(maxLength, batchNum); // å®žé™…åº”å–çš„æ•°é‡
 
-	// Èç¹ûÅúÁ¿ÉêÇëÊýÁ¿´óÓÚµ±Ç°ÂýÆô¶¯ãÐÖµ£¬ÔòãÐÖµ+1
+	// å¦‚æžœæ‰¹é‡ç”³è¯·æ•°é‡å¤§äºŽå½“å‰æ…¢å¯åŠ¨é˜ˆå€¼ï¼Œåˆ™é˜ˆå€¼+1
 	if (batchNum > maxLength)
 	{
 		list.SetMaxLength(maxLength + 1);
@@ -19,7 +19,7 @@ void* ThreadCache::FetchFromCentralCache(size_t idx, size_t size)
 	void* begin = nullptr;
 	void* end = nullptr;
 
-	// ÏòCentral CacheÉêÇënumToFetch¸öÄÚ´æ¿é
+	// å‘Central Cacheç”³è¯·numToFetchä¸ªå†…å­˜å—
 	int fetchCount = CentralCache::GetInstance()->RemoveRange(begin, end, numToFetch, size);
 	assert(fetchCount > 0);
 
@@ -29,7 +29,7 @@ void* ThreadCache::FetchFromCentralCache(size_t idx, size_t size)
 	}
 	else
 	{
-		// ½«Í·½áµãÒÔÍâµÄ¶àÓàÄÚ´æ¿éµÄ²åÈë¿ÕÏÐÁ´±í
+		// å°†å¤´ç»“ç‚¹ä»¥å¤–çš„å¤šä½™å†…å­˜å—çš„æ’å…¥ç©ºé—²é“¾è¡¨
 		list.SetSize(size);
 		list.PushRange(NextObj(begin), end, fetchCount - 1);
 	}
@@ -40,7 +40,7 @@ void* ThreadCache::Allocate(size_t bytes)
 {
 	if (bytes > MAX_BYTES)
 	{
-		// Ö±½ÓÏòCentral CacheÉêÇë
+		// ç›´æŽ¥å‘Central Cacheç”³è¯·
 		// TODO
 	}
 
@@ -53,12 +53,12 @@ void* ThreadCache::Allocate(size_t bytes)
 	}
 	else
 	{
-		// ÏòCentral CacheÉêÇëÄÚ´æ¿é
+		// å‘Central Cacheç”³è¯·å†…å­˜å—
 		return FetchFromCentralCache(idx, size);
 	}
 }
 
-// ÊÍ·ÅÄÚ´æ
+// é‡Šæ”¾å†…å­˜
 void ThreadCache::DeAllocate(void* obj, size_t size)
 {
 	assert(obj != nullptr);
@@ -77,10 +77,10 @@ void ThreadCache::ListTooLong(FreeList& list, size_t size)
 {
 	void* begin = nullptr;
 	void* end = nullptr;
-	// ½«ÄÚ´æ¿éÈ¡ÏÂmaxLength¸ö
+	// å°†å†…å­˜å—å–ä¸‹maxLengthä¸ª
 	list.PopRange(begin, end, list.MaxLength());
 
-	// ½«ÕâÐ©ÄÚ´æ¿é·µ»¹¸øCentral Cache
+	// å°†è¿™äº›å†…å­˜å—è¿”è¿˜ç»™Central Cache
 	CentralCache::GetInstance()->ReleaseListToSpans(begin, size);
 }
 

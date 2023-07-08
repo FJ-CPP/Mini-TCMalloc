@@ -1,7 +1,7 @@
 #pragma once
 #include <cassert>
 
-// ¸ù¾İÆ½Ì¨¶¨ÒåÒ³´óĞ¡
+// æ ¹æ®å¹³å°å®šä¹‰é¡µå¤§å°
 #ifdef _WIN64 
 	typedef unsigned long long PAGE_ID;
 #elif _WIN32
@@ -12,16 +12,16 @@
 	typedef unsigned int PAGE_ID;
 #endif
 
-// Thread Cache¿É·ÖÅäµÄ×î´ó¿Õ¼ä£º256KB
+// Thread Cacheå¯åˆ†é…çš„æœ€å¤§ç©ºé—´ï¼š256KB
 const size_t MAX_BYTES = 256 * 1024;
 
-// Thread Cache ºÍ Central Cache ¹ÜÀí¿ÕÏĞÄÚ´æµÄ¹şÏ£±í´óĞ¡
+// Thread Cache å’Œ Central Cache ç®¡ç†ç©ºé—²å†…å­˜çš„å“ˆå¸Œè¡¨å¤§å°
 const size_t FREE_LIST_SIZE = 208;
 
-// Ò»¸öspan×î¶à´æ´¢MAX_PAGE_NUM - 1Ò³
+// ä¸€ä¸ªspanæœ€å¤šå­˜å‚¨MAX_PAGE_NUM - 1é¡µ
 const size_t MAX_PAGE_NUM = 129;
 
-// Ò»¸öpageÕ¼ÓÃ2^PAGE_SHIFT×Ö½ÚµÄÄÚ´æ
+// ä¸€ä¸ªpageå ç”¨2^PAGE_SHIFTå­—èŠ‚çš„å†…å­˜
 const int PAGE_SHIFT = 13;
 
 #if defined(_WIN32) || defined(_WIN64)
@@ -31,14 +31,14 @@ const int PAGE_SHIFT = 13;
 #include <sys/mman.h>
 #endif
 
-// Ö±½ÓÈ¥¶ÑÉÏ°´Ò³ÉêÇë¿Õ¼ä
+// ç›´æ¥å»å †ä¸ŠæŒ‰é¡µç”³è¯·ç©ºé—´
 inline static void* SystemAlloc(size_t kpage)
 {
 	void* ptr = nullptr;
 #if _WIN32 || _WIN64
 	ptr = VirtualAlloc(0, kpage << PAGE_SHIFT, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 #elif __linux__
-	// LinuxÏÂÊ¹ÓÃsbrkºÍmmapÉêÇëÄÚ´æ(¿ÉÄÜĞèÒªÁ½´ÎÉêÇëÒÔ¶ÔÆë)
+	// Linuxä¸‹ä½¿ç”¨sbrkå’Œmmapç”³è¯·å†…å­˜(å¯èƒ½éœ€è¦ä¸¤æ¬¡ç”³è¯·ä»¥å¯¹é½)
 #endif
 
 	assert(ptr != nullptr);
@@ -50,7 +50,7 @@ inline static void SystemFree(void* ptr)
 #ifdef _WIN32
 	VirtualFree(ptr, 0, MEM_RELEASE);
 #elif __linux__
-	// LinuxÏÂÊ¹ÓÃsbrkºÍunmmapÊÍ·ÅÄÚ´æ
+	// Linuxä¸‹ä½¿ç”¨sbrkå’Œunmmapé‡Šæ”¾å†…å­˜
 #endif
 }
 

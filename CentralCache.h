@@ -6,7 +6,7 @@ extern inline void*& NextObj(void*);
 class CentralCache
 {
 private:
-	// µ¥ÀıÄ£Ê½(¶öºº)
+	// å•ä¾‹æ¨¡å¼(é¥¿æ±‰)
 	static CentralCache _instance;
 	CentralCache()
 	{
@@ -15,7 +15,7 @@ private:
 private:
 	SpanList _spanLists[FREE_LIST_SIZE];
 private:
-	// »ñÈ¡Ò»¸ö¿ÉÓÃµÄSpan
+	// è·å–ä¸€ä¸ªå¯ç”¨çš„Span
 	Span* GetOneSpan(SpanList& list, size_t size);
 public:
 	static CentralCache* GetInstance()
@@ -23,10 +23,10 @@ public:
 		return &_instance;
 	}
 
-	// ÏòThread CacheÌá¹©n¸ösize´óĞ¡µÄÄÚ´æ¿é£¬·µ»ØÊµ¼ÊÌá¹©ÁËÄÚ´æ¿éÊıÁ¿
+	// å‘Thread Cacheæä¾›nä¸ªsizeå¤§å°çš„å†…å­˜å—ï¼Œè¿”å›å®é™…æä¾›äº†å†…å­˜å—æ•°é‡
 	int RemoveRange(void*& begin, void*& end, size_t n, size_t size);
 
-	// ´ÓThread Cache»ØÊÕsize´óĞ¡µÄÄÚ´æ¿é£¬²¢½«Æä²åÈëÖÁÔ­ÏÈµÄSpanÖĞ
+	// ä»Thread Cacheå›æ”¶sizeå¤§å°çš„å†…å­˜å—ï¼Œå¹¶å°†å…¶æ’å…¥è‡³åŸå…ˆçš„Spanä¸­
 	void ReleaseListToSpans(void* begin, size_t size);
 };
 

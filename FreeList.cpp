@@ -5,7 +5,7 @@ inline void*& NextObj(void* obj)
 	return *(void**)obj;
 }
 
-void FreeList::Push(void* obj) // Í·²åÒ»¸ö½Úµã
+void FreeList::Push(void* obj) // å¤´æ’ä¸€ä¸ªèŠ‚ç‚¹
 {
 	assert(obj);
 	_length++;
@@ -13,7 +13,7 @@ void FreeList::Push(void* obj) // Í·²åÒ»¸ö½Úµã
 	_head = obj;
 }
 
-void* FreeList::Pop() // È¡ÏÂÍ·½áµã
+void* FreeList::Pop() // å–ä¸‹å¤´ç»“ç‚¹
 {
 	assert(_head != nullptr);
 	assert(_length > 0);
@@ -25,7 +25,7 @@ void* FreeList::Pop() // È¡ÏÂÍ·½áµã
 
 void  FreeList::PushRange(void* begin, void* end, size_t n)
 {
-	// ½«¿ÕÏĞÁ´±í begin->...->end Í·²åÖÁ±¾Á´±í
+	// å°†ç©ºé—²é“¾è¡¨ begin->...->end å¤´æ’è‡³æœ¬é“¾è¡¨
 	NextObj(end) = _head;
 	_head = begin;
 	_length += n;
