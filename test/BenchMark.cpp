@@ -1,4 +1,3 @@
-#define _CRT_SECURE_NO_WARNINGS 1
 #include <iostream>
 #include <vector>
 #include <ctime>
@@ -8,7 +7,7 @@
 #include "ObjectPool.hpp"
 
 /*
- * 基准测试文件
+ * 基准测试
  */
 
 /*
@@ -16,7 +15,7 @@
  * nworks: 线程数
  * rounds: 执行轮次
  */
-void BenchmarkMalloc(size_t ntimes, size_t nworks, size_t rounds) {
+void benchmarl_malloc(size_t ntimes, size_t nworks, size_t rounds) {
   std::vector<std::thread> vthread(nworks);
   std::atomic<size_t> malloc_costtime(0);
   std::atomic<size_t> free_costtime(0);
@@ -50,11 +49,11 @@ void BenchmarkMalloc(size_t ntimes, size_t nworks, size_t rounds) {
     t.join();
   }
 
-  std::cout << nworks << "个线程并发执行" << rounds << "次，每轮malloc "
-            << ntimes << "次，耗时：" << malloc_costtime << std::endl;
+  std::cout << nworks << "个线程并发执行" << rounds << "次, 每轮malloc "
+            << ntimes << "次, 耗时：" << malloc_costtime << std::endl;
 
-  std::cout << nworks << "个线程并发执行" << rounds << "次，每轮free " << ntimes
-            << "次，耗时：" << free_costtime << std::endl;
+  std::cout << nworks << "个线程并发执行" << rounds << "次, 每轮free " << ntimes
+            << "次, 耗时：" << free_costtime << std::endl;
 
   std::cout << "总计耗时:" << malloc_costtime + free_costtime << std::endl;
 }
@@ -64,7 +63,7 @@ void BenchmarkMalloc(size_t ntimes, size_t nworks, size_t rounds) {
  * nworks: 线程数
  * rounds: 执行轮次
  */
-void BenchmarkTCMalloc(size_t ntimes, size_t nworks, size_t rounds) {
+void benchmark_tcmalloc(size_t ntimes, size_t nworks, size_t rounds) {
   std::vector<std::thread> vthread(nworks);
   std::atomic<size_t> malloc_costtime(0);
   std::atomic<size_t> free_costtime(0);
@@ -77,13 +76,13 @@ void BenchmarkTCMalloc(size_t ntimes, size_t nworks, size_t rounds) {
         size_t begin1 = clock();
         for (size_t i = 0; i < ntimes; i++) {
           // v.push_back(TCMalloc((i * j + 1) % 8192 + 1));
-          v.push_back(TCMalloc(10));
+          v.push_back(tcmalloc(10));
         }
         size_t end1 = clock();
 
         size_t begin2 = clock();
         for (size_t i = 0; i < ntimes; i++) {
-          TCFree(v[i]);
+          tcfree(v[i]);
         }
         size_t end2 = clock();
         v.clear();
@@ -98,11 +97,11 @@ void BenchmarkTCMalloc(size_t ntimes, size_t nworks, size_t rounds) {
     t.join();
   }
 
-  std::cout << nworks << "个线程并发执行" << rounds << "次，每轮tcmalloc "
-            << ntimes << "次，耗时：" << malloc_costtime << std::endl;
+  std::cout << nworks << "个线程并发执行" << rounds << "次, 每轮tcmalloc "
+            << ntimes << "次, 耗时：" << malloc_costtime << std::endl;
 
-  std::cout << nworks << "个线程并发执行" << rounds << "次，每轮tcfree "
-            << ntimes << "次，耗时：" << free_costtime << std::endl;
+  std::cout << nworks << "个线程并发执行" << rounds << "次, 每轮tcfree "
+            << ntimes << "次, 耗时：" << free_costtime << std::endl;
 
   std::cout << "总计耗时：" << malloc_costtime + free_costtime << std::endl;
 }
@@ -116,9 +115,9 @@ int main() {
   while (1) {
     std::cout << "========================= begin ========================"
               << std::endl;
-    BenchmarkTCMalloc(times, nthread, n);
+    benchmark_tcmalloc(times, nthread, n);
     std::cout << std::endl << std::endl;
-    BenchmarkMalloc(times, nthread, n);
+    benchmarl_malloc(times, nthread, n);
     std::cout << "=========================  end  ========================"
               << std::endl
               << std::endl;

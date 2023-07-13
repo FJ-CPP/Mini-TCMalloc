@@ -7,10 +7,10 @@
 
 template <class T> class ObjectPool {
 private:
-  char *_start = nullptr;    // 内存池的起始地址
-  void *_freeList = nullptr; // 可用内存块组成的空闲链表
-  size_t _remainBytes = 0;   // 内存池剩余空间大小
-  std::mutex _mtx;
+  char *start_ = nullptr;     // 内存池的起始地址
+  void *free_list_ = nullptr; // 可用内存块组成的空闲链表
+  size_t remain_bytes_ = 0;   // 内存池剩余空间大小
+  std::mutex mtx_;
 
 public:
   // 申请一个T类型对象
@@ -18,26 +18,26 @@ public:
     return new T();
     T *obj = nullptr;
     // 优先到空闲链表中取下一个可用内存块
-    if (_freeList != nullptr) {
-      obj = (T *)_freeList;
-      _freeList = *(void **)_freeList;
+    if (free_list_ != nullptr) {
+      obj = (T *)free_list_;
+      free_list_ = *(void **)free_list_;
 
       new (obj) T;
       return obj;
     }
 
     // 直接从内存池取一块内存
-    if (_remainBytes < sizeof(T)) {
+    if (remain_bytes_ < sizeof(T)) {
       // 剩余内存不够用
-      _remainBytes = 128 * 1024; // 每次默认开辟128KB
-      _start = (char *)SystemAlloc(_remainBytes >> 13);
+      remain_bytes_ = 128 * 1024; // 每次默认开辟128KB
+      start_ = (char *)system_alloc(remain_bytes_ >> 13);
     }
 
     // 由于freeList需要用"前4/8字节(取决于系统位数)"存储下一个节点
     // 因此至少分配sizeof(char*)个字节
-    obj = (T *)_start;
-    _start += max(sizeof(T), sizeof(char *));
-    _remainBytes -= max(sizeof(T), sizeof(char *));
+    obj = (T *)start_;
+    start_ += max(sizeof(T), sizeof(char *));
+    remain_bytes_ -= max(sizeof(T), sizeof(char *));
 
     if (obj == nullptr) {
       int x = 10;
@@ -50,49 +50,49 @@ public:
   void Delete(T *obj) {
     obj->~T(); // 清理对象
 
-    *(void **)obj = _freeList;
-    _freeList = obj;
+    *(void **)obj = free_list_;
+    free_list_ = obj;
   }
 
-  void Lock() { _mtx.lock(); }
+  void lock() { mtx_.lock(); }
 
-  void Unlock() { _mtx.unlock(); }
+  void unlock() { mtx_.unlock(); }
 };
 
 // template <class T>
 // class ObjectPool
 //{
 // private:
-//	char* _start = nullptr;  // 内存池的起始地址
-//	FreeList _freeList;      // 可用内存块组成的空闲链表
-//	size_t _remainBytes = 0; // 内存池剩余空间大小
+//	char* start_ = nullptr;  // 内存池的起始地址
+//	FreeList free_list_;      // 可用内存块组成的空闲链表
+//	size_t remain_bytes_ = 0; // 内存池剩余空间大小
 // public:
 //	// 申请一个T类型对象
 //	T* New()
 //	{
 //		T* obj = nullptr;
 //		// 优先到空闲链表中取下一个可用内存块
-//		if (!_freeList.Empty())
+//		if (!free_list_.empty())
 //		{
-//			obj = (T*)_freeList.Pop();
+//			obj = (T*)free_list_.pop();
 //
 //			new(obj)T;
 //			return obj;
 //		}
 //
 //		// 直接从内存池取一块内存
-//		if (_remainBytes < sizeof(T))
+//		if (remain_bytes_ < sizeof(T))
 //		{
 //			// 剩余内存不够用
-//			_remainBytes = 128 * 1024; // 每次默认开辟128KB
-//			_start = (char*)SystemAlloc(_remainBytes >> 13);
+//			remain_bytes_ = 128 * 1024; // 每次默认开辟128KB
+//			start_ = (char*)system_alloc(remain_bytes_ >> 13);
 //		}
 //
 //		// 由于freeList需要用"前4/8字节(取决于系统位数)"存储下一个节点
 //		// 因此至少分配sizeof(char*)个字节
-//		obj = (T*)_start;
-//		_start += max(sizeof(T), sizeof(char*));
-//		_remainBytes -= max(sizeof(T), sizeof(char*));
+//		obj = (T*)start_;
+//		start_ += max(sizeof(T), sizeof(char*));
+//		remain_bytes_ -= max(sizeof(T), sizeof(char*));
 //
 //		new(obj)T; // 定位new：显式调用构造函数
 //		return obj;
@@ -103,6 +103,6 @@ public:
 //	{
 //		obj->~T(); // 清理对象
 //
-//		_freeList.Push(obj);
+//		free_list_.push(obj);
 //	}
 //};

@@ -1,37 +1,36 @@
-#define _CRT_SECURE_NO_WARNINGS 1
 #include "TCMalloc.h"
 
 // TLS 线程本地存储的Thread Cache
-thread_local TLSThreadCache tlsTC;
+thread_local TLSThreadCache tls_tc;
 
-void *TCMalloc(int bytes) {
+void *tcmalloc(int bytes) {
   assert(bytes > 0);
 
   // 超过Thread Cache能够分配的最大内存，因此直接向Page Heap申请
   if (bytes > MAX_BYTES) {
-    int alignedSize = Utility::RoundUp(bytes);
-    size_t npage = alignedSize >> PAGE_SHIFT;
+    int aligned_size = Utility::round_up(bytes);
+    size_t npage = aligned_size >> PAGE_SHIFT;
 
-    PageHeap::GetInstance()->Lock();
-    Span *span = PageHeap::GetInstance()->NewSpan(npage);
-    PageHeap::GetInstance()->Unlock();
+    PageHeap::get_instance()->lock();
+    Span *span = PageHeap::get_instance()->new_span(npage);
+    PageHeap::get_instance()->unlock();
 
-    span->_objSize = alignedSize;
-    void *obj = (void *)(span->_pageID << PAGE_SHIFT);
+    span->obj_size = aligned_size;
+    void *obj = (void *)(span->page_id << PAGE_SHIFT);
     return obj;
   }
 
-  return tlsTC._pTC->Allocate(bytes);
+  return tls_tc.ptc_->allocate(bytes);
 }
 
-void TCFree(void *obj) {
-  Span *span = PageHeap::GetInstance()->MapObjectToSpan(obj);
-  size_t size = span->_objSize;
+void tcfree(void *obj) {
+  Span *span = PageHeap::get_instance()->map_object_to_Span(obj);
+  size_t size = span->obj_size;
   if (size > MAX_BYTES) {
-    PageHeap::GetInstance()->Lock();
-    PageHeap::GetInstance()->ReleaseSpanToPageHeap(span);
-    PageHeap::GetInstance()->Unlock();
+    PageHeap::get_instance()->lock();
+    PageHeap::get_instance()->release_span_to_pageheap(span);
+    PageHeap::get_instance()->unlock();
   } else {
-    tlsTC._pTC->DeAllocate(obj, size);
+    tls_tc.ptc_->deallocate(obj, size);
   }
 }

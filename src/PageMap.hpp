@@ -44,7 +44,7 @@ public:
     root_[i1]->values[i2] = v;
   }
 
-  bool Ensure(Number start, size_t n) {
+  bool ensure(Number start, size_t n) {
     for (Number key = start; key <= start + n - 1;) {
       const Number i1 = key >> LEAF_BITS;
 
@@ -57,8 +57,8 @@ public:
       if (root_[i1] == NULL) {
         // Leaf* leaf = reinterpret_cast<Leaf*>((*allocator_)(sizeof(Leaf)));
         // if (leaf == NULL) return false;
-        static ObjectPool<Leaf> leafPool;
-        Leaf *leaf = (Leaf *)leafPool.New();
+        static ObjectPool<Leaf> leaf_pool;
+        Leaf *leaf = (Leaf *)leaf_pool.New();
 
         memset(leaf, 0, sizeof(*leaf));
         root_[i1] = leaf;
@@ -71,7 +71,7 @@ public:
   }
 
   void PreallocateMoreMemory() {
-    // Allocate enough to keep track of all possible pages
-    Ensure(0, 1 << BITS);
+    // allocate enough to keep track of all possible pages
+    ensure(0, 1 << BITS);
   }
 };

@@ -32,7 +32,7 @@ const int PAGE_SHIFT = 13;
 #endif
 
 // 直接去堆上按页申请空间
-inline static void *SystemAlloc(size_t kpage) {
+inline static void *system_alloc(size_t kpage) {
   void *ptr = nullptr;
 #if _WIN32 || _WIN64
   ptr = VirtualAlloc(0, kpage << PAGE_SHIFT, MEM_COMMIT | MEM_RESERVE,

@@ -1,34 +1,33 @@
-#define _CRT_SECURE_NO_WARNINGS 1
 #include "SpanList.h"
 
-void SpanList::PushFront(Span *newSpan) { Insert(Begin(), newSpan); }
+void SpanList::push_front(Span *new_span) { insert(begin(), new_span); }
 
-Span *SpanList::PopFront() {
-  assert(!Empty());
-  Span *front = Begin();
-  Erase(front);
+Span *SpanList::pop_front() {
+  assert(!empty());
+  Span *front = begin();
+  erase(front);
   return front;
 }
 
-void SpanList::Insert(Span *pos, Span *newSpan) {
-  assert(newSpan);
+void SpanList::insert(Span *pos, Span *new_span) {
+  assert(new_span);
   assert(pos);
 
-  Span *prev = pos->_prev;
+  Span *prev = pos->prev;
 
-  prev->_next = newSpan;
-  newSpan->_prev = prev;
-  newSpan->_next = pos;
-  pos->_prev = newSpan;
+  prev->next = new_span;
+  new_span->prev = prev;
+  new_span->next = pos;
+  pos->prev = new_span;
 }
 
-void SpanList::Erase(Span *pos) {
+void SpanList::erase(Span *pos) {
   assert(pos);
-  assert(pos != _head);
+  assert(pos != head_);
 
-  Span *prev = pos->_prev;
-  Span *next = pos->_next;
+  Span *prev = pos->prev;
+  Span *next = pos->next;
 
-  prev->_next = next;
-  next->_prev = prev;
+  prev->next = next;
+  next->prev = prev;
 }

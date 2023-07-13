@@ -6,29 +6,29 @@
 class PageHeap {
 private:
   // 单例模式(饿汉)
-  static PageHeap _instance;
+  static PageHeap instance_;
   PageHeap() {}
   PageHeap(const PageHeap &) = delete;
 
 private:
-  std::mutex _mtx;
-  SpanList _spanLists[MAX_PAGE_NUM];
-  TCMalloc_PageMap2<32 - PAGE_SHIFT> _idMap;
-  ObjectPool<Span> _spanPool;
+  std::mutex mtx_;
+  SpanList span_lists_[MAX_PAGE_NUM];
+  TCMalloc_PageMap2<32 - PAGE_SHIFT> id_map_;
+  ObjectPool<Span> span_pool_;
 
 public:
-  static PageHeap *GetInstance() { return &_instance; }
+  static PageHeap *get_instance() { return &instance_; }
 
   // 获取内存块所在的Span
-  Span *MapObjectToSpan(void *obj);
+  Span *map_object_to_Span(void *obj);
 
   // 申请一个n页的Span
-  Span *NewSpan(size_t npage);
+  Span *new_span(size_t npage);
 
   // 将Span返还给PageHeap
-  void ReleaseSpanToPageHeap(Span *span);
+  void release_span_to_pageheap(Span *span);
 
-  void Lock() { _mtx.lock(); }
+  void lock() { mtx_.lock(); }
 
-  void Unlock() { _mtx.unlock(); }
+  void unlock() { mtx_.unlock(); }
 };

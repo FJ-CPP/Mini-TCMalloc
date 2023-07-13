@@ -1,40 +1,39 @@
-#define _CRT_SECURE_NO_WARNINGS 1
 #include "FreeList.h"
-inline void *&NextObj(void *obj) { return *(void **)obj; }
+inline void *&next_obj(void *obj) { return *(void **)obj; }
 
-void FreeList::Push(void *obj) // 头插一个节点
+void FreeList::push(void *obj) // 头插一个节点
 {
   assert(obj);
-  _length++;
-  NextObj(obj) = _head;
-  _head = obj;
+  length_++;
+  next_obj(obj) = head_;
+  head_ = obj;
 }
 
-void *FreeList::Pop() // 取下头结点
+void *FreeList::pop() // 取下头结点
 {
-  assert(_head != nullptr);
-  assert(_length > 0);
-  _length--;
-  void *obj = _head;
-  _head = NextObj(_head);
+  assert(head_ != nullptr);
+  assert(length_ > 0);
+  length_--;
+  void *obj = head_;
+  head_ = next_obj(head_);
   return obj;
 }
 
-void FreeList::PushRange(void *begin, void *end, size_t n) {
+void FreeList::push_range(void *begin, void *end, size_t n) {
   // 将空闲链表 begin->...->end 头插至本链表
-  NextObj(end) = _head;
-  _head = begin;
-  _length += n;
+  next_obj(end) = head_;
+  head_ = begin;
+  length_ += n;
 }
 
-void FreeList::PopRange(void *&begin, void *&end, size_t n) {
-  assert(n <= _length);
-  begin = _head;
+void FreeList::pop_range(void *&begin, void *&end, size_t n) {
+  assert(n <= length_);
+  begin = head_;
   end = begin;
   for (size_t i = 0; i < n - 1; ++i) {
-    end = NextObj(end);
+    end = next_obj(end);
   }
-  _head = NextObj(end);
-  NextObj(end) = nullptr;
-  _length -= n;
+  head_ = next_obj(end);
+  next_obj(end) = nullptr;
+  length_ -= n;
 }
