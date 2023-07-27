@@ -1,8 +1,6 @@
 #include "Utility.h"
 #include "CentralCache.h"
 
-extern inline void *&next_obj(void *);
-
 CentralCache CentralCache::instance_;
 
 Span *CentralCache::get_one_span(SpanList &list, size_t size) {

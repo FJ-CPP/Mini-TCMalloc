@@ -85,9 +85,9 @@ Span *PageHeap::new_span(size_t npage) {
 void PageHeap::release_span_to_pageheap(Span *span) {
   // 超过MAX_PAGE_NUM-1的直接还给系统堆
   if (span->n > MAX_PAGE_NUM - 1) {
-    void *obj = (void *)(span->page_id >> PAGE_SHIFT);
+    void *obj = (void *)(span->page_id << PAGE_SHIFT);
     span_pool_.Delete(span);
-    SystemFree(obj);
+    system_free(obj);
     return;
   }
 

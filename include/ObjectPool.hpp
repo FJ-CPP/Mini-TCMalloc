@@ -1,5 +1,6 @@
 #pragma once
 #include "common.h"
+#include <mutex>
 
 /*
  * 定长的数据结构内存池，根据模板T提供大小为sizeof(T)的定长内存块
@@ -36,12 +37,9 @@ public:
     // 由于freeList需要用"前4/8字节(取决于系统位数)"存储下一个节点
     // 因此至少分配sizeof(char*)个字节
     obj = (T *)start_;
-    start_ += max(sizeof(T), sizeof(char *));
-    remain_bytes_ -= max(sizeof(T), sizeof(char *));
+    start_ += std::max(sizeof(T), sizeof(char *));
+    remain_bytes_ -= std::max(sizeof(T), sizeof(char *));
 
-    if (obj == nullptr) {
-      int x = 10;
-    }
     new (obj) T; // 定位new：显式调用构造函数
     return obj;
   }
@@ -91,8 +89,8 @@ public:
 //		// 由于freeList需要用"前4/8字节(取决于系统位数)"存储下一个节点
 //		// 因此至少分配sizeof(char*)个字节
 //		obj = (T*)start_;
-//		start_ += max(sizeof(T), sizeof(char*));
-//		remain_bytes_ -= max(sizeof(T), sizeof(char*));
+//		start_ += std::max(sizeof(T), sizeof(char*));
+//		remain_bytes_ -= std::max(sizeof(T), sizeof(char*));
 //
 //		new(obj)T; // 定位new：显式调用构造函数
 //		return obj;

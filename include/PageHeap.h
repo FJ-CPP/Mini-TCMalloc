@@ -1,4 +1,5 @@
 #pragma once
+#include "common.h"
 #include "SpanList.h"
 #include "ObjectPool.hpp"
 #include "PageMap.hpp"

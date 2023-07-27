@@ -1,9 +1,10 @@
 #include "TCMalloc.h"
+#include "ThreadCache.h"
 
 // TLS 线程本地存储的Thread Cache
 thread_local TLSThreadCache tls_tc;
 
-void *tcmalloc(int bytes) {
+void *tcmalloc(size_t bytes) {
   assert(bytes > 0);
 
   // 超过Thread Cache能够分配的最大内存，因此直接向Page Heap申请

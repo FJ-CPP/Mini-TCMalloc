@@ -1,5 +1,5 @@
 #include "FreeList.h"
-inline void *&next_obj(void *obj) { return *(void **)obj; }
+#include "Utility.h"
 
 void FreeList::push(void *obj) // 头插一个节点
 {

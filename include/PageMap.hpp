@@ -1,5 +1,6 @@
 #pragma once
 #include "common.h"
+#include <cstring>
 
 // 两层基数树
 template <int BITS> class TCMalloc_PageMap2 {

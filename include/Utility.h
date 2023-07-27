@@ -20,3 +20,5 @@ public:
   // 根据size计算其应当由npage页的Span分割而来
   static size_t num_move_page(size_t size);
 };
+
+inline void *&next_obj(void *obj) { return *(void **)obj; }

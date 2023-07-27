@@ -15,6 +15,8 @@
  * nworks: 线程数
  * rounds: 执行轮次
  */
+static const int ALLOC_SIZE_MAX = 8192;
+
 void benchmarl_malloc(size_t ntimes, size_t nworks, size_t rounds) {
   std::vector<std::thread> vthread(nworks);
   std::atomic<size_t> malloc_costtime(0);
@@ -27,8 +29,8 @@ void benchmarl_malloc(size_t ntimes, size_t nworks, size_t rounds) {
       for (size_t j = 0; j < rounds; ++j) {
         size_t begin1 = clock();
         for (size_t i = 0; i < ntimes; i++) {
-          // v.push_back(malloc((i * j + 1) % 8192 + 1));
-          v.push_back(malloc(10));
+          v.push_back(malloc((i * j + 1) % ALLOC_SIZE_MAX + 1));
+          // v.push_back(malloc(10));
         }
         size_t end1 = clock();
 
@@ -75,8 +77,8 @@ void benchmark_tcmalloc(size_t ntimes, size_t nworks, size_t rounds) {
       for (size_t j = 0; j < rounds; ++j) {
         size_t begin1 = clock();
         for (size_t i = 0; i < ntimes; i++) {
-          // v.push_back(TCMalloc((i * j + 1) % 8192 + 1));
-          v.push_back(tcmalloc(10));
+          v.push_back(tcmalloc((i * j + 1) % ALLOC_SIZE_MAX + 1));
+          // v.push_back(tcmalloc(10));
         }
         size_t end1 = clock();
 
@@ -111,6 +113,14 @@ int main() {
   size_t times = 10000;
   int nthread = 10;
   size_t n = 10;
+
+  std::vector<void *> v;
+  for (int i = 0; i < 1000; ++i) {
+    v.emplace_back(tcmalloc(129 * 1024 * 8));
+  }
+  for (auto e : v) {
+    tcfree(e);
+  }
 
   while (1) {
     std::cout << "========================= begin ========================"

@@ -1,28 +1,17 @@
 #pragma once
-#include "ThreadCache.h"
 
-// Thread Cache数据结构池
-static ObjectPool<ThreadCache> tc_pool;
+#include <cstddef>
 
-class TLSThreadCache {
-public:
-  ThreadCache *ptc_;
-
-public:
-  TLSThreadCache() {
-    tc_pool.lock();
-    ptc_ = tc_pool.New();
-    tc_pool.unlock();
-  }
-  ~TLSThreadCache() {
-    tc_pool.lock();
-    tc_pool.Delete(ptc_);
-    tc_pool.unlock();
-  }
-};
+#ifdef _WIN32
+#define MINI_TCMALLOC_EXPORT_SYMBOL __declspec(dllexport)
+#define MINI_TCMALLOC_IMPORT_SYMBOL __declspec(dllimport)
+#else
+#define MINI_TCMALLOC_EXPORT_SYMBOL __attribute__((visibility("default")))
+#define MINI_TCMALLOC_IMPORT_SYMBOL
+#endif
 
 // 根据所需大小申请内存块
-void *tcmalloc(int bytes);
+MINI_TCMALLOC_EXPORT_SYMBOL void *tcmalloc(size_t bytes);
 
 // 释放TCMalloc申请的内存块obj
-void tcfree(void *obj);
+MINI_TCMALLOC_EXPORT_SYMBOL void tcfree(void *obj);

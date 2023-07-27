@@ -4,7 +4,7 @@ import os
 import subprocess
 import argparse
 
-cpp_sub_folders = ["src", "include"]
+cpp_sub_folders = ["src", "include", "test"]
 py_sub_folders = [".ci"]
 cmake_sub_folders = ["."]
 

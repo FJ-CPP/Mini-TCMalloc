@@ -1,5 +1,6 @@
 #pragma once
 #include <cassert>
+#include <cstddef>
 
 // 根据平台定义页大小
 #ifdef _WIN64
@@ -8,7 +9,7 @@ typedef unsigned long long PAGE_ID;
 typedef size_t PAGE_ID;
 #elif __linux__ && __WORDSIZE == 64
 typedef unsigned long long PAGE_ID;
-#elif __linux__ && __WORDSZIE == 32
+#elif __linux__ && __WORDSIZE == 32
 typedef unsigned int PAGE_ID;
 #endif
 
@@ -22,7 +23,7 @@ const size_t FREE_LIST_SIZE = 208;
 const size_t MAX_PAGE_NUM = 129;
 
 // 一个page占用2^PAGE_SHIFT字节的内存
-const int PAGE_SHIFT = 13;
+const int PAGE_SHIFT = 12;
 
 #if defined(_WIN32) || defined(_WIN64)
 #include <windows.h>
@@ -30,6 +31,9 @@ const int PAGE_SHIFT = 13;
 #include <unistd.h>
 #include <sys/mman.h>
 #endif
+
+#include <unordered_map>
+static std::unordered_map<void *, int> kpage_map;
 
 // 直接去堆上按页申请空间
 inline static void *system_alloc(size_t kpage) {
@@ -39,16 +43,24 @@ inline static void *system_alloc(size_t kpage) {
                      PAGE_READWRITE);
 #elif __linux__
   // Linux下使用sbrk和mmap申请内存(可能需要两次申请以对齐)
+  // std::cout << "alloc " << kpage << std::endl;
+  ptr = mmap(0, kpage << PAGE_SHIFT, PROT_READ | PROT_WRITE,
+             MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+  if (ptr == MAP_FAILED) {
+    ptr = nullptr;
+  }
+  kpage_map[ptr] = kpage;
 #endif
 
   assert(ptr != nullptr);
   return ptr;
 }
 
-inline static void SystemFree(void *ptr) {
+inline static void system_free(void *ptr) {
 #ifdef _WIN32
   VirtualFree(ptr, 0, MEM_RELEASE);
 #elif __linux__
   // Linux下使用sbrk和unmmap释放内存
+  munmap(ptr, kpage_map[ptr] << PAGE_SHIFT);
 #endif
 }
