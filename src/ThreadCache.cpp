@@ -1,4 +1,5 @@
 #include "ThreadCache.h"
+#include "ObjectPool.hpp"
 
 void *ThreadCache::fetch_from_centralcache(size_t idx, size_t size) {
   FreeList &list = free_lists_[idx];
@@ -32,11 +33,6 @@ void *ThreadCache::fetch_from_centralcache(size_t idx, size_t size) {
 }
 
 void *ThreadCache::allocate(size_t bytes) {
-  if (bytes > MAX_BYTES) {
-    // 直接向Central Cache申请
-    // TODO
-  }
-
   size_t size = Utility::round_up(bytes);
   int idx = Utility::index(size);
 
@@ -79,3 +75,6 @@ ThreadCache::~ThreadCache() {
     }
   }
 }
+
+// Thread Cache数据结构池
+ObjectPool<ThreadCache> tc_pool;

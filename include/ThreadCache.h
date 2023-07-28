@@ -25,14 +25,12 @@ public:
   ~ThreadCache();
 };
 
-// Thread Cache数据结构池
-static ObjectPool<ThreadCache> tc_pool;
+extern ObjectPool<ThreadCache> tc_pool;
 
 class TLSThreadCache {
 public:
   ThreadCache *ptc_;
 
-public:
   TLSThreadCache() {
     tc_pool.lock();
     ptc_ = tc_pool.New();

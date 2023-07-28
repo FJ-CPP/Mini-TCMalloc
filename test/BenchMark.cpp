@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include <ctime>
+#include <chrono>
 #include <thread>
 #include <atomic>
 #include "TCMalloc.h"
@@ -17,7 +17,7 @@
  */
 static const int ALLOC_SIZE_MAX = 8192;
 
-void benchmarl_malloc(size_t ntimes, size_t nworks, size_t rounds) {
+void benchmark_malloc(size_t ntimes, size_t nworks, size_t rounds) {
   std::vector<std::thread> vthread(nworks);
   std::atomic<size_t> malloc_costtime(0);
   std::atomic<size_t> free_costtime(0);
@@ -27,22 +27,26 @@ void benchmarl_malloc(size_t ntimes, size_t nworks, size_t rounds) {
       std::vector<void *> v;
 
       for (size_t j = 0; j < rounds; ++j) {
-        size_t begin1 = clock();
+        auto begin1 = std::chrono::steady_clock::now().time_since_epoch();
         for (size_t i = 0; i < ntimes; i++) {
           v.push_back(malloc((i * j + 1) % ALLOC_SIZE_MAX + 1));
           // v.push_back(malloc(10));
         }
-        size_t end1 = clock();
+        auto end1 = std::chrono::steady_clock::now().time_since_epoch();
 
-        size_t begin2 = clock();
+        auto begin2 = std::chrono::steady_clock::now().time_since_epoch();
         for (size_t i = 0; i < ntimes; i++) {
           free(v[i]);
         }
-        size_t end2 = clock();
+        auto end2 = std::chrono::steady_clock::now().time_since_epoch();
         v.clear();
 
-        malloc_costtime += (end1 - begin1);
-        free_costtime += (end2 - begin2);
+        malloc_costtime +=
+            std::chrono::duration_cast<std::chrono::milliseconds>(end1 - begin1)
+                .count();
+        free_costtime +=
+            std::chrono::duration_cast<std::chrono::milliseconds>(end2 - begin2)
+                .count();
       }
     });
   }
@@ -52,12 +56,13 @@ void benchmarl_malloc(size_t ntimes, size_t nworks, size_t rounds) {
   }
 
   std::cout << nworks << "个线程并发执行" << rounds << "次, 每轮malloc "
-            << ntimes << "次, 耗时：" << malloc_costtime << std::endl;
+            << ntimes << "次, 耗时：" << malloc_costtime << "ms" << std::endl;
 
   std::cout << nworks << "个线程并发执行" << rounds << "次, 每轮free " << ntimes
-            << "次, 耗时：" << free_costtime << std::endl;
+            << "次, 耗时：" << free_costtime << "ms" << std::endl;
 
-  std::cout << "总计耗时:" << malloc_costtime + free_costtime << std::endl;
+  std::cout << "总计耗时:" << malloc_costtime + free_costtime << "ms"
+            << std::endl;
 }
 
 /*
@@ -75,22 +80,26 @@ void benchmark_tcmalloc(size_t ntimes, size_t nworks, size_t rounds) {
       std::vector<void *> v;
 
       for (size_t j = 0; j < rounds; ++j) {
-        size_t begin1 = clock();
+        auto begin1 = std::chrono::steady_clock::now().time_since_epoch();
         for (size_t i = 0; i < ntimes; i++) {
           v.push_back(tcmalloc((i * j + 1) % ALLOC_SIZE_MAX + 1));
           // v.push_back(tcmalloc(10));
         }
-        size_t end1 = clock();
+        auto end1 = std::chrono::steady_clock::now().time_since_epoch();
 
-        size_t begin2 = clock();
+        auto begin2 = std::chrono::steady_clock::now().time_since_epoch();
         for (size_t i = 0; i < ntimes; i++) {
           tcfree(v[i]);
         }
-        size_t end2 = clock();
+        auto end2 = std::chrono::steady_clock::now().time_since_epoch();
         v.clear();
 
-        malloc_costtime += (end1 - begin1);
-        free_costtime += (end2 - begin2);
+        malloc_costtime +=
+            std::chrono::duration_cast<std::chrono::milliseconds>(end1 - begin1)
+                .count();
+        free_costtime +=
+            std::chrono::duration_cast<std::chrono::milliseconds>(end2 - begin2)
+                .count();
       }
     });
   }
@@ -100,12 +109,13 @@ void benchmark_tcmalloc(size_t ntimes, size_t nworks, size_t rounds) {
   }
 
   std::cout << nworks << "个线程并发执行" << rounds << "次, 每轮tcmalloc "
-            << ntimes << "次, 耗时：" << malloc_costtime << std::endl;
+            << ntimes << "次, 耗时：" << malloc_costtime << "ms" << std::endl;
 
   std::cout << nworks << "个线程并发执行" << rounds << "次, 每轮tcfree "
-            << ntimes << "次, 耗时：" << free_costtime << std::endl;
+            << ntimes << "次, 耗时：" << free_costtime << "ms" << std::endl;
 
-  std::cout << "总计耗时：" << malloc_costtime + free_costtime << std::endl;
+  std::cout << "总计耗时：" << malloc_costtime + free_costtime << "ms"
+            << std::endl;
 }
 
 int main() {
@@ -114,22 +124,32 @@ int main() {
   int nthread = 10;
   size_t n = 10;
 
-  std::vector<void *> v;
-  for (int i = 0; i < 1000; ++i) {
-    v.emplace_back(tcmalloc(129 * 1024 * 8));
-  }
-  for (auto e : v) {
-    tcfree(e);
-  }
+  // while (1) {
+  //   std::cout << "tcmalloc" << std::endl;
+  //   std::vector<void *> v;
+  //   for (int i = 0; i < 500; ++i) {
+  //     int *p = (int *)tcmalloc(129 * 1024 * 8);
+  //     v.emplace_back(p);
+  //     for (int j = 0; j < 129 * 1024 * 2; ++j) {
+  //       p[j] = 0;
+  //     }
+  //   }
+  //   for (auto e : v) {
+  //     tcfree(e);
+  //   }
+  //   std::this_thread::sleep_for(std::chrono::seconds(1));
+  // }
 
   while (1) {
     std::cout << "========================= begin ========================"
               << std::endl;
     benchmark_tcmalloc(times, nthread, n);
     std::cout << std::endl << std::endl;
-    benchmarl_malloc(times, nthread, n);
+    benchmark_malloc(times, nthread, n);
     std::cout << "=========================  end  ========================"
               << std::endl
               << std::endl;
   }
+
+  return 0;
 }

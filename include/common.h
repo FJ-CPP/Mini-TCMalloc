@@ -43,7 +43,6 @@ inline static void *system_alloc(size_t kpage) {
                      PAGE_READWRITE);
 #elif __linux__
   // Linux下使用sbrk和mmap申请内存(可能需要两次申请以对齐)
-  // std::cout << "alloc " << kpage << std::endl;
   ptr = mmap(0, kpage << PAGE_SHIFT, PROT_READ | PROT_WRITE,
              MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
   if (ptr == MAP_FAILED) {
@@ -61,6 +60,8 @@ inline static void system_free(void *ptr) {
   VirtualFree(ptr, 0, MEM_RELEASE);
 #elif __linux__
   // Linux下使用sbrk和unmmap释放内存
-  munmap(ptr, kpage_map[ptr] << PAGE_SHIFT);
+  int res = munmap(ptr, kpage_map[ptr] << PAGE_SHIFT);
+  assert(res == 0);
+  kpage_map.erase(ptr);
 #endif
 }

@@ -1,7 +1,7 @@
 #pragma once
 #include "common.h"
 #include <mutex>
-
+#include <vector>
 /*
  * 定长的数据结构内存池，根据模板T提供大小为sizeof(T)的定长内存块
  */
@@ -12,8 +12,15 @@ private:
   void *free_list_ = nullptr; // 可用内存块组成的空闲链表
   size_t remain_bytes_ = 0;   // 内存池剩余空间大小
   std::mutex mtx_;
+  std::vector<void *> used_buffer_;
 
 public:
+  ~ObjectPool() {
+    for (auto buffer : used_buffer_) {
+      system_free(buffer);
+    }
+  }
+
   // 申请一个T类型对象
   T *New() {
     return new T();
@@ -31,7 +38,8 @@ public:
     if (remain_bytes_ < sizeof(T)) {
       // 剩余内存不够用
       remain_bytes_ = 128 * 1024; // 每次默认开辟128KB
-      start_ = (char *)system_alloc(remain_bytes_ >> 13);
+      start_ = (char *)system_alloc(remain_bytes_ >> PAGE_SHIFT);
+      used_buffer_.push_back(start_);
     }
 
     // 由于freeList需要用"前4/8字节(取决于系统位数)"存储下一个节点
