@@ -2,7 +2,11 @@ project(mini-tcmalloc)
 
 cmake_minimum_required(VERSION 3.5.0)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
+
+option(BUILD_TEST "Build test files." ON)
+
+option(BUILD_TUTORIALS "Build tutorial files." ON)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "release")
@@ -36,6 +40,12 @@ add_subdirectory(include)
 add_subdirectory(src)
 
 if(BUILD_TEST)
+  # message(STATUS "Build gtest!!!") add_subdirectory(thirdparty/googletest)
   message(STATUS "Build test files!!!")
   add_subdirectory(test)
 endif(BUILD_TEST)
+
+if(BUILD_TUTORIALS)
+  message(STATUS "Build tutorial files!!!")
+  add_subdirectory(tutorial)
+endif(BUILD_TUTORIALS)
