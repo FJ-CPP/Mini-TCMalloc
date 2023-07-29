@@ -55,8 +55,8 @@ int CentralCache::remove_range(void *&begin, void *&end, size_t n,
   list.lock(); // 加桶锁
 
   Span *span = get_one_span(list, size); // 获取一个可用的Span
-  assert(span);
-  assert(span->free_list);
+  ASSERT(span != nullptr);
+  ASSERT(span->free_list);
 
   begin = span->free_list;
   end = begin;

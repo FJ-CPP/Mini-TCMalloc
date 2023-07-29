@@ -18,7 +18,7 @@ void *system_alloc(size_t kpage) {
   kpage_map[ptr] = kpage;
 #endif
 
-  assert(ptr != nullptr);
+  ASSERT(ptr != nullptr);
   return ptr;
 }
 
@@ -27,7 +27,7 @@ void system_free(void *ptr) {
   VirtualFree(ptr, 0, MEM_RELEASE);
 #elif __linux__
   int res = munmap(ptr, kpage_map[ptr] << PAGE_SHIFT);
-  assert(res == 0);
+  ASSERT(res == 0);
   kpage_map.erase(ptr);
 #endif
 }

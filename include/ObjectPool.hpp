@@ -2,6 +2,7 @@
 #include "Common.h"
 #include <mutex>
 #include <vector>
+#include <type_traits>
 /*
  * 定长的数据结构内存池，根据模板T提供大小为sizeof(T)的定长内存块
  */
@@ -23,7 +24,6 @@ public:
 
   // 申请一个T类型对象
   T *New() {
-    return new T();
     T *obj = nullptr;
     // 优先到空闲链表中取下一个可用内存块
     if (free_list_ != nullptr) {
@@ -49,12 +49,16 @@ public:
     remain_bytes_ -= std::max(sizeof(T), sizeof(char *));
 
     new (obj) T; // 定位new：显式调用构造函数
+    ASSERT(obj != nullptr);
     return obj;
   }
 
   // 释放一个T类型对象
   void Delete(T *obj) {
-    obj->~T(); // 清理对象
+    ASSERT(obj != nullptr);
+    if (!std::is_fundamental<T>::value) {
+      obj->~T(); // 清理对象
+    }
 
     *(void **)obj = free_list_;
     free_list_ = obj;

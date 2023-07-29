@@ -49,13 +49,13 @@ int Utility::index(size_t size) {
     return index_helper(size - 64 * 1024, 13) + count[3] + count[2] + count[1] +
            count[0];
   } else {
-    assert(false);
+    ASSERT(false);
     return -1;
   }
 }
 
 size_t Utility::num_move_size(size_t size) {
-  assert(size > 0);
+  ASSERT(size > 0);
 
   // 慢启动的阈值
   // 小对象一次最多申请512个

@@ -20,10 +20,10 @@ void *ThreadCache::fetch_from_centralcache(size_t idx, size_t size) {
   // 向Central Cache申请numToFetch个内存块
   int fetch_count = CentralCache::get_instance()->remove_range(
       begin, end, num_to_fetch, size);
-  assert(fetch_count > 0);
+  ASSERT(fetch_count > 0);
 
   if (fetch_count == 1) {
-    assert(begin == end);
+    ASSERT(begin == end);
   } else {
     // 将头结点以外的多余内存块的插入空闲链表
     list.set_size(size);
@@ -46,7 +46,7 @@ void *ThreadCache::allocate(size_t bytes) {
 
 // 释放内存
 void ThreadCache::deallocate(void *obj, size_t size) {
-  assert(obj != nullptr);
+  ASSERT(obj != nullptr);
   int idx = Utility::index(size);
 
   FreeList &list = free_lists_[idx];

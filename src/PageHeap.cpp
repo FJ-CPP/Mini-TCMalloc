@@ -10,14 +10,14 @@ Span *PageHeap::map_object_to_Span(void *obj) {
   if (ret != nullptr) {
     return ret;
   } else {
-    assert(false);
+    ASSERT(false);
     return nullptr;
   }
 }
 
 // 申请一个n页的Span
 Span *PageHeap::new_span(size_t npage) {
-  assert(npage > 0);
+  ASSERT(npage > 0);
 
   if (npage > MAX_PAGE_NUM - 1) {
     // 直接向系统堆申请

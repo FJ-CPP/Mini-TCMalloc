@@ -3,7 +3,7 @@
 
 void FreeList::push(void *obj) // 头插一个节点
 {
-  assert(obj);
+  ASSERT(obj != nullptr);
   length_++;
   next_obj(obj) = head_;
   head_ = obj;
@@ -11,8 +11,8 @@ void FreeList::push(void *obj) // 头插一个节点
 
 void *FreeList::pop() // 取下头结点
 {
-  assert(head_ != nullptr);
-  assert(length_ > 0);
+  ASSERT(head_ != nullptr);
+  ASSERT(length_ > 0);
   length_--;
   void *obj = head_;
   head_ = next_obj(head_);
@@ -27,7 +27,7 @@ void FreeList::push_range(void *begin, void *end, size_t n) {
 }
 
 void FreeList::pop_range(void *&begin, void *&end, size_t n) {
-  assert(n <= length_);
+  ASSERT(n <= length_);
   begin = head_;
   end = begin;
   for (size_t i = 0; i < n - 1; ++i) {

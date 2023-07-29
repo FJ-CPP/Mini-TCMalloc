@@ -16,11 +16,9 @@ string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE)
 if(NOT CMAKE_BUILD_TYPE MATCHES "debug")
   message(WARNING "Building release!!!")
   set(CMAKE_CXX_FLAGS
-      "${CMAKE_CXX_FLAGS} -O3 -Wall -fvisibility-inlines-hidden -fvisibility=hidden"
+      "${CMAKE_CXX_FLAGS} -O3 -Wall -fvisibility-inlines-hidden"
   )
-  set(CMAKE_C_FLAGS
-      "${CMAKE_C_FLAGS} -O3 -Wall -fvisibility-inlines-hidden -fvisibility=hidden"
-  )
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -Wall -fvisibility-inlines-hidden")
 else()
   message(WARNING "Building debug!!!")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g3 -Wall")
@@ -43,6 +41,9 @@ if(BUILD_TEST)
   # message(STATUS "Build gtest!!!") add_subdirectory(thirdparty/googletest)
   message(STATUS "Build test files!!!")
   add_subdirectory(test)
+else()
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden")
 endif(BUILD_TEST)
 
 if(BUILD_TUTORIALS)

@@ -2,6 +2,8 @@
 #include <cassert>
 #include <cstddef>
 
+#include "Macro.hpp"
+
 // 根据平台定义页大小
 #ifdef _WIN64
 typedef unsigned long long PAGE_ID;
