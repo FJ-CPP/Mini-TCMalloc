@@ -28,9 +28,7 @@ void *tcmalloc(size_t bytes) {
 }
 
 void tcfree(void *obj) {
-  if (obj == nullptr) {
-    ASSERT(false);
-  }
+  ASSERT(obj != nullptr);
 
   Span *span = PageHeap::get_instance()->map_object_to_Span(obj);
   size_t size = span->obj_size;

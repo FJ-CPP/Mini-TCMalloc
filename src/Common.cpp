@@ -1,7 +1,5 @@
 #include "Common.h"
-
-#include <unordered_map>
-static std::unordered_map<void *, int> kpage_map;
+#include "Static.h"
 
 // 直接去堆上按页申请空间
 void *system_alloc(size_t kpage) {
@@ -15,7 +13,7 @@ void *system_alloc(size_t kpage) {
   if (ptr == MAP_FAILED) {
     ptr = nullptr;
   }
-  kpage_map[ptr] = kpage;
+  Static::kpage_map[ptr] = kpage;
 #endif
 
   ASSERT(ptr != nullptr);
@@ -26,8 +24,8 @@ void system_free(void *ptr) {
 #ifdef _WIN32
   VirtualFree(ptr, 0, MEM_RELEASE);
 #elif __linux__
-  int res = munmap(ptr, kpage_map[ptr] << PAGE_SHIFT);
+  int res = munmap(ptr, Static::kpage_map[ptr] << PAGE_SHIFT);
   ASSERT(res == 0);
-  kpage_map.erase(ptr);
+  Static::kpage_map.erase(ptr);
 #endif
 }

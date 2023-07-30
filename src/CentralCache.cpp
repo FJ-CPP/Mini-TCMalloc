@@ -1,8 +1,6 @@
 #include "Utility.h"
 #include "CentralCache.h"
 
-CentralCache CentralCache::instance_;
-
 Span *CentralCache::get_one_span(SpanList &list, size_t size) {
   // 优先使用空闲的span
   Span *span = list.begin();

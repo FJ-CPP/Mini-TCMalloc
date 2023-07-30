@@ -2,6 +2,10 @@
 #include <gtest/gtest.h>
 #include <thread>
 
+// #ifndef NODEBUG
+// #error "This file must be built in release mode!"
+// #endif
+
 struct MyStruct {
   int a;
   double b;

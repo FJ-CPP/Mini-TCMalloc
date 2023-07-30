@@ -1,4 +1,20 @@
 #include "SpanList.h"
+#include "ObjectPool.hpp"
+#include "Static.h"
+
+SpanList::SpanList() {
+  Static::static_span_pool.lock();
+  head_ = Static::static_span_pool.New();
+  Static::static_span_pool.unlock();
+  head_->next = head_;
+  head_->prev = head_;
+}
+
+SpanList::~SpanList() {
+  Static::static_span_pool.lock();
+  Static::static_span_pool.Delete(head_);
+  Static::static_span_pool.unlock();
+}
 
 void SpanList::push_front(Span *new_span) {
   ASSERT(new_span);

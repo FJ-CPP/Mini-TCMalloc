@@ -14,6 +14,7 @@ endif(NOT CMAKE_BUILD_TYPE)
 
 string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE)
 if(NOT CMAKE_BUILD_TYPE MATCHES "debug")
+  add_compile_definitions("NODEBUG")
   message(WARNING "Building release!!!")
   set(CMAKE_CXX_FLAGS
       "${CMAKE_CXX_FLAGS} -O3 -Wall -fvisibility-inlines-hidden"

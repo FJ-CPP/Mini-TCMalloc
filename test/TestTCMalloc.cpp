@@ -2,6 +2,10 @@
 #include <gtest/gtest.h>
 #include <climits>
 
+// #ifndef NODEBUG
+// #error "This file must be built in release mode!"
+// #endif
+
 TEST(TCMallocTest, NormalAllocationFree) {
   void *my_memory = tcmalloc(64);
   EXPECT_NE(my_memory, nullptr);
@@ -11,7 +15,7 @@ TEST(TCMallocTest, NormalAllocationFree) {
 TEST(TCMallocTest, ZeroByteAllocation) {
   void *zero_byte_memory = tcmalloc(0);
   EXPECT_EQ(zero_byte_memory, nullptr);
-  tcfree(zero_byte_memory);
+  EXPECT_THROW(tcfree(zero_byte_memory), std::runtime_error);
 }
 
 TEST(TCMallocTest, MultipleAllocationsAndFrees) {
@@ -25,7 +29,7 @@ TEST(TCMallocTest, MultipleAllocationsAndFrees) {
 // These tests might cause errors depending on the implementation of TCMalloc.
 TEST(TCMallocTest, FreeingNonTCMallocMemory) {
   int *memory_not_from_tcmalloc = new int[10];
-  EXPECT_DEATH(tcfree(memory_not_from_tcmalloc), "");
+  EXPECT_THROW(tcfree(memory_not_from_tcmalloc), std::runtime_error);
 }
 
 // TEST(TCMallocTest, DoubleFree) {

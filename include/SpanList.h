@@ -23,11 +23,9 @@ private:
   std::mutex mtx_;
 
 public:
-  SpanList() {
-    head_ = new Span;
-    head_->next = head_;
-    head_->prev = head_;
-  }
+  SpanList();
+
+  ~SpanList();
 
   bool empty() { return head_->next == head_; }
 

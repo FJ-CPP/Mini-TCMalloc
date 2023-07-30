@@ -1,6 +1,10 @@
 #include "SpanList.h"
 #include <gtest/gtest.h>
 
+// #ifndef NODEBUG
+// #error "This file must be built in release mode!"
+// #endif
+
 class SpanListTest : public ::testing::Test {
 protected:
   SpanList *spanList;

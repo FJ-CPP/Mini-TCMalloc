@@ -1,7 +1,5 @@
 #include "PageHeap.h"
 
-PageHeap PageHeap::instance_;
-
 Span *PageHeap::map_object_to_Span(void *obj) {
   PAGE_ID id = ((PAGE_ID)obj >> PAGE_SHIFT);
 
@@ -10,7 +8,7 @@ Span *PageHeap::map_object_to_Span(void *obj) {
   if (ret != nullptr) {
     return ret;
   } else {
-    ASSERT(false);
+    ASSERT(ret != nullptr);
     return nullptr;
   }
 }
