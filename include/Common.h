@@ -25,11 +25,9 @@ const size_t FREE_LIST_SIZE = 208;
 const size_t MAX_PAGE_NUM = 129;
 
 // 一个page占用2^PAGE_SHIFT字节的内存
-#if defined _WIN64 || _WIN32
 const int PAGE_SHIFT = 13;
-#elif __linux__
-const int PAGE_SHIFT = 12;
-#endif
+
+const int ALIGNMENT = 1 << PAGE_SHIFT;
 
 #if defined(_WIN32) || defined(_WIN64)
 #include <windows.h>

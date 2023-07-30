@@ -75,6 +75,3 @@ ThreadCache::~ThreadCache() {
     }
   }
 }
-
-// Thread Cache数据结构池
-ObjectPool<ThreadCache> tc_pool;

@@ -118,11 +118,18 @@ void benchmark_tcmalloc(size_t ntimes, size_t nworks, size_t rounds) {
             << std::endl;
 }
 
-int main() {
+int main(int argc, const char *argv[]) {
+  if (argc != 5) {
+    std::cout << "Usage:\n\t" << argv[0]
+              << " [thread_num] [rounds] [malloc_times] [repeat_time]\n";
+    std::abort();
+  }
+
   srand((unsigned int)time(0));
-  size_t times = 10000;
-  int nthread = 10;
-  size_t n = 10;
+  int nthread = atoi(argv[1]);
+  size_t n = atoi(argv[2]);
+  size_t times = atoi(argv[3]);
+  int repeat_time = atoi(argv[4]);
 
   // while (1) {
   //   std::cout << "tcmalloc" << std::endl;
@@ -140,7 +147,7 @@ int main() {
   //   std::this_thread::sleep_for(std::chrono::seconds(1));
   // }
 
-  while (1) {
+  while (repeat_time--) {
     std::cout << "========================= begin ========================"
               << std::endl;
     benchmark_tcmalloc(times, nthread, n);
